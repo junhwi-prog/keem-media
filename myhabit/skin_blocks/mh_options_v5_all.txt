@@ -1,0 +1,421 @@
+<!-- MH_OPTIONS 2026-10-08 START (옵션 창 v5: 전 제품, 단품·기획 전 옵션, 박스 사진, 페이지 이동 없이 담기, 혜택 줄, 옛 채널 배너 숨김. 이 블록만 지우면 원상복구) -->
+<script>
+/* 마이해빗 작업용: 옵션 목록 정리 v5 (2026-10-08)
+   - v5: 디다 형식 줄(박스 사진·칩·고른 줄 테두리) + 할인율 유지 + 옵션 아래 혜택 줄(채널 추가 쿠폰·카카오 가입)
+   - v4: 다른 상품(단품·기획) 줄을 골라도 페이지 이동 없이 이 화면에서 담기·바로구매·네이버페이 (카페24 장바구니 요청에 상품 번호·품목코드만 바꿔 보냄)
+   - 단품 옵션과 기획(N+1)을 박스 수 순서로 한 목록에. 같은 박스 수는 가장 싼 줄 하나만 (값이 같으면 이 페이지에서 바로 고르는 줄)
+   - 가격은 옵션별 실제 판매가(option_stock_data)로 읽는다 (옵션 이름에 "+○원"이 없는 상품이 있다)
+   - BEST 는 최근 30일 많이 팔린 줄(BEST_OF), 최대할인은 박스당 가장 싼 줄. 옵션 이름에 박힌 [BEST]·[최대할인]은 숨김
+   - 가격·상품명·관리자 옵션은 그대로. 숨긴 옵션도 지우지 않고 화면에서만 감춘다 */
+(function () {
+  if (window.__mhOpt) return; window.__mhOpt = 1;
+
+  // 단품 product_no -> 판매 중인 기획 product_no (2026-10-08 진열·판매 기준. 368·496·495 는 진열 안 함이라 뺌)
+  var BUNDLES = {
+    14: [493], 268: [371], 471: [485], 482: [494, 484], 62: [454, 239],
+    207: [328], 327: [350], 365: [386], 366: [386], 411: [479],
+    176: [226], 440: [450], 497: [499]
+  };
+  // 여기 없는 상품도 옵션이 있으면 같은 모양으로 (자기 옵션만, 다른 페이지 안 읽음). 단위는 옵션 이름의 박스·개입·개
+  var SKIP = { 386: 1 };   // 맛 두 개를 고르는 기획 페이지는 스킨 화면 그대로
+  var NOTE = { 386: '맛 섞기 가능' };
+  // BEST: 최근 30일(9/8~10/7) 가장 많이 팔린 줄. 값 = 기획 번호, 또는 's'+박스 수(단품 옵션)
+  var BEST_OF = { 14: 493, 268: '371:2+1', 471: 485, 482: 484, 62: 454, 207: 328, 327: 350, 365: 386, 366: 386, 176: 226 };
+  var SINGLE_OF = {};
+  Object.keys(BUNDLES).forEach(function (s) { BUNDLES[s].forEach(function (b) { if (!SINGLE_OF[b]) SINGLE_OF[b] = +s; }); });
+
+  // 카페24 미리보기(/skin-skinNN)는 따옴표 안의 '/경로' 앞에 /skin-skinNN 을 스스로 붙인다. 실몰은 접두어가 없다 -> 코드에서 붙이지 않는다
+  var PREFIX = '';
+  function won(n) { return Math.round(n).toLocaleString('ko-KR') + '원'; }
+  function num(s) { return parseInt(String(s).replace(/[^\d]/g, ''), 10) || 0; }
+  function meta(doc, p) { var m = doc.querySelector('meta[property="' + p + '"]'); return m ? m.getAttribute('content') : ''; }
+  function boxesOf(t) { var p = /(\d+)\s*\+\s*(\d+)/.exec(t); if (p) return +p[1] + +p[2]; var m = /(\d+)\s*(박스|개입|개)/.exec(t); return m ? +m[1] : 0; }
+  function unitOf(t) { if (/(\d+)\s*\+\s*(\d+)|박스/.test(t)) return '박스'; var m = /\d+\s*(개입|개)/.exec(t); return m ? m[1] : '박스'; }
+  // 맛 고르는 옵션(NFC 택1) 이름: [옵션1] 같은 대괄호와 100% 를 할인율로 읽지 않는다
+  function optName(t) { return String(t).replace(/\[[^\]]*\]/g, '').replace(/[(]\s*[+-][\d,]+원\s*[)]/, '').trim(); }
+  function plusOf(t) { var p = /(\d+)\s*\+\s*(\d+)/.exec(t); return p ? p[1] + '+' + p[2] : ''; }
+  function pctOf(t) { var m = /\[(\d+)%\]/.exec(t) || /(\d+)%/.exec(t); return m && +m[1] < 90 ? +m[1] : 0; }
+  function bestIn(t) { return /\[BEST\]/i.test(t); }
+  function productNo() { return parseInt(window.iProductNo || (/product_no=(\d+)/.exec(location.search) || [])[1], 10); }
+  function wantBox() { var m = /[?&]mh_box=(\d+)/.exec(location.search); return m ? +m[1] : 0; }
+  function href(no, box) { return PREFIX + '/product/detail.html?product_no=' + no + (box ? '&mh_box=' + box : ''); }
+
+  // 옵션별 실제 판매가: { 옵션값: {text, total, show} }
+  function stockOf(html) {
+    var m = /option_stock_data\s*=\s*[']([^\n]*?)['];/.exec(html || ''); if (!m) return {};   // 카페24 편집기는 역슬래시 두 개를 하나로 줄인다 - 역슬래시 두 개 금지
+    try {
+      var d = JSON.parse(JSON.parse('"' + m[1] + '"')), r = {};
+      Object.keys(d).forEach(function (k) { var v = d[k]; if (v && v.option_value != null) r[k] = { text: v.option_value, total: +v.option_price, show: v.is_display === 'T' && v.is_selling === 'T' }; });
+      return r;
+    } catch (e) { return {}; }
+  }
+  // 옵션값이 품목코드가 아니라 옵션 이름 그대로인 상품이 있다 (효소습관 맥스·NMN·슬림케어)
+  function byText(st, v) { for (var k in st) if (st[k].text === v) return st[k]; return null; }
+  // 기획 줄 할인율은 단품 1박스 정가 × 박스 수 기준으로 맞춘다 (기획 페이지마다 정가 기준이 달라서)
+  function fixPct(rows, l1) {
+    var one = rows.filter(function (r) { return r.n === 1 && !r.bno; })[0];
+    if (one && !one.pct) l1 = 0;   // 단품에 할인율 표시가 없는 상품(NMN)은 기획 줄에도 안 붙인다
+    else if (one) l1 = one.total / (1 - one.pct / 100);   // 1박스 줄에 보이는 할인율과 같은 기준으로 (상품 정가 칸과 옵션 이름의 %가 안 맞는 상품이 있다)
+    if (!l1) { rows.forEach(function (r) { if (r.bno) r.pct = 0; }); return; }
+    rows.forEach(function (r) { if (r.bno && r.n) r.pct = Math.max(0, Math.round((1 - r.total / (r.n * l1)) * 100)); });
+  }
+  function fetchPage(no) {
+    return fetch('/product/detail.html?product_no=' + no, { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (h) { return h ? { no: no, html: h, doc: new DOMParser().parseFromString(h, 'text/html') } : null; })
+      .catch(function () { return null; });
+  }
+  function priceOf(doc) { return num(meta(doc, 'product:sale_price:amount') || meta(doc, 'product:price:amount')); }
+  function listOf(doc) { var cu = doc.querySelector('#span_product_price_custom'); return num(cu ? cu.textContent : '') || num(meta(doc, 'product:price:amount')); }
+
+  // 다른 페이지의 줄을 이 화면에서 살 때 필요한 값 (상품 번호·품목코드·옵션값). 못 구하면 null → 그 줄은 링크로 남는다
+  function buyOf(pg, key) {
+    if (SKIP[pg.no]) return null;
+    var b = { no: pg.no, name: meta(pg.doc, 'og:title') || '', price: priceOf(pg.doc) };
+    if (!key) {
+      var m = /item_code\s*=\s*[']([^']+)[']/.exec(pg.html || ''); if (!m) return null;
+      b.code = m[1]; b.opt = ''; return b;
+    }
+    var st = stockOf(pg.html), o = st[key], v = '';
+    [].some.call(pg.doc.querySelectorAll('#product_option_id1 option'), function (x) {
+      if (x.value === key || (o && (x.value === o.text || x.textContent.trim() === o.text))) { v = x.value; return true; }
+    });
+    if (!v) return null;
+    b.code = key; b.opt = v; return b;
+  }
+  // 다른 페이지의 줄들
+  function rowsOfPage(pg, isSingle) {
+    if (!pg) return [];
+    var st = stockOf(pg.html), keys = Object.keys(st), title = meta(pg.doc, 'og:title') || '', rows = [];
+    if (isSingle) {
+      if (!keys.length) rows.push({ n: 1, total: priceOf(pg.doc), pct: pctFromList(pg.doc), href: href(pg.no), src: 's1', buy: buyOf(pg, '') });
+      keys.forEach(function (k) { var o = st[k], n = boxesOf(o.text); if (o.show && n) rows.push({ n: n, unit: unitOf(o.text), total: o.total, plus: plusOf(o.text), pct: pctOf(o.text), tagBest: bestIn(o.text), href: href(pg.no, n), src: 's' + n, buy: buyOf(pg, k) }); });
+    } else {
+      var plusKeys = keys.filter(function (k) { return st[k].show && plusOf(st[k].text); });
+      if (plusKeys.length) plusKeys.forEach(function (k) { var o = st[k], r = bundleRow(pg, o.text, o.total); r.buy = buyOf(pg, k); rows.push(r); });
+      else if (plusOf(title)) { var r = bundleRow(pg, title, priceOf(pg.doc)); r.buy = buyOf(pg, ''); rows.push(r); }
+    }
+    return rows;
+  }
+  function pctFromList(doc) { var l = listOf(doc), s = priceOf(doc); return l > s ? Math.round((1 - s / l) * 100) : 0; }
+  function bundleRow(pg, text, total) {
+    var n = boxesOf(text), plus = plusOf(text), notes = [];
+    if (NOTE[pg.no]) notes.push(NOTE[pg.no]);
+    var list = listOf(pg.doc) * (total / (priceOf(pg.doc) || total));
+    return { n: n, total: total, plus: plus, notes: notes, pct: list > total ? Math.round((1 - total / list) * 100) : 0, href: href(pg.no), src: pg.no + ':' + plus, bno: pg.no };
+  }
+
+  // 같은 박스 수 중 가장 싼 줄 하나. 값이 같으면 이 페이지 줄(here) > 단품 > 기획
+  function pick(rows) {
+    var by = {}, out = [];
+    rows.forEach(function (r) {
+      if (!r.n) { out.push(r); return; }
+      var c = by[r.n];
+      var rank = function (x) { return (x.here ? 0 : 2) + (x.src && x.src.charAt(0) === 's' ? 0 : 1); };
+      if (!c || r.total < c.total || (r.total === c.total && rank(r) < rank(c))) by[r.n] = r;
+    });
+    Object.keys(by).forEach(function (n) { out.push(by[n]); });
+    return out.sort(function (a, b) { return (a.n || 0) - (b.n || 0); });
+  }
+
+  // 레퍼런스(뉴트리코어·닥터린): 왼쪽 이름, 오른쪽 총액(굵게) + 할인율(빨강, 총액 바로 옆), 그 아래 회색 박스당. 배지·테두리 없음
+  // v5 (디다 형식, 10/8 사용자 "좋은 점만"): 왼쪽 박스 사진(실제 누끼를 박스 수만큼), 이름 아래 총액 + 할인율(빨강) + 박스당(회색), 오른쪽 끝 칩
+  var THUMB = { 14: 'enzyme', 268: 'glucose', 471: 'mct', 482: 'stopit', 62: 'iron', 207: 'vinegar', 327: 'lemon', 365: 'max', 366: 'max_gb', 411: 'nmn', 176: 'slim', 440: 'wildfit',
+    20: 'hobak', 335: 'iron_p', 389: 'konjac', 497: 'paradise' };   // 351 귀리렌틸콩 곤약밥은 누끼가 없어 사진 칸 없이   // 디자인팀 누끼로 만든 썸네일 (thumbs/compose.py)   // 단품 번호 -> 썸네일 이름 (이름_N.png). 사진 없는 상품은 사진 칸 없이
+  // 썸네일 72장은 GitHub junhwi-prog/keem-media(공개) + jsDelivr. 사진을 바꾸면 커밋 해시를 새로 넣을 것
+  var THUMB_BASE = window.MH_THUMB_BASE || 'https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@3855620/myhabit/option_thumbs/';
+  var FREE_SHIP = num(((document.documentElement.innerHTML.match(/\(([\d,]+)원 이상 구매 시 무료\)/) || [])[1])) || 50000;
+  var CUR_SINGLE = 0;
+  function rowHTML(o) {
+    var unit = o.unit || '박스';
+    var name = o.n ? o.n + unit : (o.name || '');   // N+1 표기는 안 보인다 (사용자 10/8 "2+1 표시 진짜 별로")
+    var th = THUMB[CUR_SINGLE] && o.n && unit !== '개입' ?'<span class="mh-th"><img src="' + THUMB_BASE + THUMB[CUR_SINGLE] + '_' + Math.min(o.n, 6) + '.png" alt=""></span>' : '';
+    var chips = (o.best ? '<em class="mh-chip mh-chip-best">BEST</em>' : '') + (o.max ? '<em class="mh-chip mh-chip-max">최대할인</em>' : '') +
+      (o.total >= FREE_SHIP ? '<em class="mh-chip">무료배송</em>' : '');
+    var notes = (o.notes || []).length ? '<span class="mh-note">' + o.notes.join(' · ') + '</span>' : '';
+    var pb = o.n ? '<span class="mh-pb">' + (unit === '박스' ? '박스당 ' : '개당 ') + won(o.total / o.n) + '</span>' : '';
+    return th + '<span class="mh-bd"><span class="mh-nm">' + name + '</span>' +
+      '<span class="mh-pr"><span class="mh-won">' + won(o.total) + '</span>' + (o.pct ? '<span class="mh-pct">' + o.pct + '%</span>' : '') + pb + '</span>' + notes + '</span>' +
+      (chips ? '<span class="mh-chips">' + chips + '</span>' : '');
+  }
+  // 옵션 아래 혜택 줄: 카카오톡 채널 추가 쿠폰(모두), 카카오 간편 가입(로그인 안 한 손님만)
+  var KAKAO_CH = 'https://pf.kakao.com/_uxnGmK';
+  function addPerks(after, before) {
+    if (!(after || before) || document.querySelector('.mh-perks')) return;
+    var off = !!document.querySelector('.xans-layout-statelogoff');
+    var ico = '<span class="mh-k"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="#191919" d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7l-1 3.6c-.1.3.3.6.6.4l4.2-2.8c.5.1 1 .1 1.5.1 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg></span>';
+    var d = document.createElement('div'); d.className = 'mh-perks';
+    d.innerHTML =
+      '<a class="mh-perk" href="' + KAKAO_CH + '" target="_blank" rel="noopener">' + ico + '<span class="mh-perk-t">카카오톡 채널 추가하고 <b>3,000원 쿠폰</b> 받기</span><span class="mh-perk-b">채널 추가</span></a>' +
+      (off ? '<a class="mh-perk mh-perk-join" href="#">' + ico + '<span class="mh-perk-t">카카오로 1초 가입하고 <b>적립금 즉시</b> 받기</span><span class="mh-perk-b">회원가입</span></a>' : '');
+    var j = d.querySelector('.mh-perk-join');
+    if (j) j.addEventListener('click', function (e) {
+      e.preventDefault();
+      var a = document.querySelector('a[onclick*="kakaosyncLogin"]');
+      if (a) a.click(); else location.href = PREFIX + '/member/login.html';
+    });
+    if (before) { d.classList.add('mh-perks-top'); before.parentNode.insertBefore(d, before); }
+    else after.parentNode.insertBefore(d, after.nextSibling);
+  }
+  // 옛 상품 페이지 배너(.dtl-bnr, "카카오톡 채널 추가하고 적립금 받기" — 문구도 틀림, 실제는 3,000원 쿠폰)는 혜택 줄과 겹쳐 숨긴다. 스킨 HTML 은 그대로
+  function hideOldBanner() {
+    [].forEach.call(document.querySelectorAll('.dtl-bnr'), function (b) { if (b.querySelector('a[href*="pf.kakao.com"]')) b.classList.add('mh-off'); });
+  }
+  function markTags(rows, single) {
+    var best = BEST_OF[single], minPer = Infinity, minRow = null;
+    rows.forEach(function (r) {
+      if (!best && r.tagBest) r.best = true;   // 판매 집계가 없는 상품은 옵션 이름의 [BEST]
+      if (best &&(r.bno === best || r.src === String(best) || (r.bno + ':' + r.plus) === String(best))) r.best = true;
+      if (r.n > 1 && r.total / r.n < minPer - 0.5) { minPer = r.total / r.n; minRow = r; }
+    });
+    if (minRow) minRow.max = true;
+  }
+
+  // 다른 상품 줄: 살 값이 있으면 이 화면에서 고르는 줄, 없으면(맛 고르는 기획) 링크
+  function foreignLi(r) {
+    var li = document.createElement('li'); li.className = 'custom-opt-item mh-foreign';
+    if (r.buy) { li.innerHTML = '<span class="mh-row"></span>'; li.addEventListener('click', function () { pickForeign(li, r); }); }
+    else li.innerHTML = '<a class="mh-row" href="' + r.href + '"></a>';
+    r.li = li; return li;
+  }
+  function render(ul, rows) {
+    rows.forEach(function (r) {
+      var li = r.li || foreignLi(r);
+      var box = li.querySelector('.mh-row');
+      if (!box) { box = document.createElement('span'); box.className = 'mh-row'; li.appendChild(box); }
+      box.innerHTML = rowHTML(r);
+      ul.appendChild(li);
+    });
+  }
+
+  /* ---------- 옵션 목록이 있는 페이지 (단품, 또는 옵션 있는 기획) ---------- */
+  function decorateList() {
+    var no = productNo(); if (SKIP[no]) return true;
+    var wrap = document.querySelector('.custom-option-wrap');
+    var sel = document.querySelector('#product_option_id1');
+    if (!wrap || !sel || wrap.getAttribute('data-mh')) return false;
+    var ul = wrap.querySelector('ul'); if (!ul || !ul.querySelector('li.custom-opt-item')) return false;
+    var single = BUNDLES[no] ? no : (SINGLE_OF[no] || no);
+    var isSingle = single === no; CUR_SINGLE = single;
+    wrap.setAttribute('data-mh', '1'); wrap.classList.add('mh-list');
+    var st = stockOf(document.documentElement.innerHTML), base = priceOf(document);
+
+    var here = [].map.call(ul.querySelectorAll('li.custom-opt-item'), function (li) {
+      var v = li.getAttribute('data-value'), o = st[v] || byText(st, v), opt = [].filter.call(sel.options, function (x) { return x.value === v; })[0];
+      var t = o ? o.text : (opt ? opt.text : li.textContent), n = boxesOf(t), plus = plusOf(t);
+      [].forEach.call(li.children, function (c) { c.classList.add('mh-hide'); });
+      li.addEventListener('click', function () { clearForeign(); mark(li); });
+      var r = { li: li, here: true, n: n, unit: unitOf(t), name: n ? '' : optName(t), tagBest: bestIn(t), total: o ? o.total : base, plus: plus, pct: pctOf(t), src: isSingle ? 's' + n : no + ':' + plus, bno: isSingle ? 0 : no, notes: [] };
+      if (!isSingle) { var b = bundleRow({ no: no, doc: document }, t, r.total); r.notes = b.notes; r.pct = b.pct; }
+      return r;
+    });
+    // 기획 페이지의 "N박스" 일반 옵션은 단품 페이지 줄과 겨룬다 (기획 줄만 이 페이지 몫)
+    var others = (BUNDLES[single] || []).filter(function (b) { return b !== no; });
+    var l1 = isSingle ? listOf(document) : 0;
+    var jobs = (isSingle ? [] : [fetchPage(single).then(function (pg) { if (pg) { l1 = listOf(pg.doc); window.__mhName = meta(pg.doc, "og:title"); } return rowsOfPage(pg, true); })])
+      .concat(others.map(function (b) { return fetchPage(b).then(function (pg) { return rowsOfPage(pg, false); }); }));
+    Promise.all(jobs).then(function (lists) {
+      var all = here.concat([].concat.apply([], lists));
+      var shown = pick(all);
+      here.forEach(function (r) { if (shown.indexOf(r) < 0) r.li.classList.add('mh-gone'); });
+      fixPct(shown, l1);
+      markTags(shown, single);
+      render(ul, shown);
+      addPerks(wrap);
+      // 처음 선택: ?mh_box=N 이 있으면 그 줄, 단품 페이지는 1박스, 기획 페이지는 그 기획 줄
+      var want = wantBox(), myPlus = plusOf(meta(document, 'og:title') || '');
+      var hit = shown.filter(function (r) {
+        if (want) return r.n === want;
+        return r.here && (isSingle ? r.n === 1 : (myPlus ? r.plus === myPlus : true));
+      })[0];
+      if (!hit && isSingle && !want) hit = shown.filter(function (r) { return r.here && r.n; })[0];   // 1박스가 없는 상품(곤약밥 8개입~)은 가장 작은 줄
+      if (hit && !ul.querySelector('li.mh-on')) setTimeout(function () { hit.li.click(); }, 300);
+    });
+    return true;
+  }
+
+  function mark(li) { var ul = li.parentNode; [].forEach.call(ul.children, function (x) { x.classList.toggle('mh-on', x === li); }); }
+
+  /* ---------- 옵션 없는 페이지 (옵션 없는 단품, 옵션 없는 기획): 같은 목록을 만들어 이 페이지 줄을 선택 상태로 ---------- */
+  function buildPlain() {
+    var no = productNo(), single = BUNDLES[no] ? no : SINGLE_OF[no];
+    var anchor = document.querySelector('#totalProducts');
+    // 묶을 상품이 없는 옵션 없는 상품(애사비·센시라인 등): 목록 없이 혜택 줄만
+    if (!single && !SKIP[no] && anchor && !document.querySelector('#product_option_id1')) { addPerks(null, anchor); return; }
+    if (window.__mhPlain || !single || SKIP[no] || !anchor || document.querySelector('.mh-list') || document.querySelector('#product_option_id1')) return;
+    window.__mhPlain = 1;
+    var isSingle = single === no; CUR_SINGLE = single;
+    var me = { no: no, html: document.documentElement.innerHTML, doc: document };
+    var mine = rowsOfPage(me, isSingle); mine.forEach(function (r) { r.here = true; r.on = true; delete r.href; });
+    var others = (BUNDLES[single] || []).filter(function (b) { return b !== no; });
+    var l1 = isSingle ? listOf(document) : 0;
+    var jobs = (isSingle ? [] : [fetchPage(single).then(function (pg) { if (pg) { l1 = listOf(pg.doc); window.__mhName = meta(pg.doc, "og:title"); } return rowsOfPage(pg, true); })])
+      .concat(others.map(function (b) { return fetchPage(b).then(function (pg) { return rowsOfPage(pg, false); }); }));
+    Promise.all(jobs).then(function (lists) {
+      var rest = pick([].concat.apply([], lists)).filter(function (r) {   // 이 페이지 줄은 항상 보이고, 같은 박스 수의 더 비싼 줄은 뺀다
+        return !mine.some(function (m) { return m.n === r.n && m.total <= r.total; });
+      });
+      var shown = mine.concat(rest).sort(function (a, b) { return a.n - b.n || (a.on ? -1 : 1); });
+      fixPct(shown, l1);
+      markTags(shown, single);
+      var wrap = document.createElement('div'); wrap.className = 'custom-option-wrap mh-list mh-built';
+      wrap.innerHTML = '<div class="co-header mh-head">수량 선택</div>';
+      var ul = document.createElement('ul'); wrap.appendChild(ul);
+      shown.forEach(function (r) {
+        var li;
+        if (r.on) {
+          li = document.createElement('li'); li.className = 'custom-opt-item mh-on';
+          li.innerHTML = '<span class="mh-row">' + rowHTML(r) + '</span>';
+          li.addEventListener('click', function () { clearForeign(); mark(li); });
+        } else { li = foreignLi(r); li.querySelector('.mh-row').innerHTML = rowHTML(r); }
+        ul.appendChild(li);
+      });
+      anchor.parentNode.insertBefore(wrap, anchor);
+      addPerks(wrap);
+    });
+  }
+
+  /* ---------- 다른 상품 줄 고르기: 카페24 선택 칸을 비우고 우리 칸을 보여 준다 ---------- */
+  var FOREIGN = null;   // { r, qty }
+  function nativeBoxes() { return [document.querySelector('#totalProducts'), document.querySelector('#totalPrice')].filter(Boolean); }
+  function pickForeign(li, r) {
+    [].forEach.call(document.querySelectorAll('#totalProducts .option_box_del'), function (x) { try { x.click(); } catch (e) {} });
+    mark(li);
+    FOREIGN = { r: r, qty: 1 };
+    nativeBoxes().forEach(function (x) { x.classList.add('mh-off'); });
+    drawSel();
+  }
+  function clearForeign() {
+    if (!FOREIGN) return;
+    FOREIGN = null;
+    var s = document.querySelector('.mh-sel'); if (s) s.parentNode.removeChild(s);
+    nativeBoxes().forEach(function (x) { x.classList.remove('mh-off'); });
+  }
+  function drawSel() {
+    var anchor = document.querySelector('#totalProducts'); if (!anchor || !FOREIGN) return;
+    var s = document.querySelector('.mh-sel');
+    if (!s) {
+      s = document.createElement('div'); s.className = 'mh-sel';
+      anchor.parentNode.insertBefore(s, anchor);
+      s.addEventListener('click', function (e) {
+        var d = e.target.getAttribute('data-d');
+        if (d) { FOREIGN.qty = Math.max(1, Math.min(99, FOREIGN.qty + +d)); drawSel(); }
+        if (e.target.classList.contains('mh-x')) { var on = document.querySelector('.mh-list li.mh-on'); if (on) on.classList.remove('mh-on'); clearForeign(); }
+      });
+      s.addEventListener('change', function (e) { if (e.target.tagName === 'INPUT') { FOREIGN.qty = Math.max(1, Math.min(99, num(e.target.value) || 1)); drawSel(); } });
+    }
+    var r = FOREIGN.r, q = FOREIGN.qty, nm = (window.__mhName || meta(document, 'og:title') || '').replace(/^\[[^\]]*\]\s*/, '');
+    s.innerHTML =
+      '<div class="mh-sel-box"><span class="mh-sel-nm"><strong>' + nm + '</strong><em>- ' + r.n + (r.unit || '박스') + '</em></span>' +
+      '<span class="mh-q"><button type="button" data-d="-1">−</button><input type="text" inputmode="numeric" value="' + q + '"><button type="button" data-d="1">+</button></span>' +
+      '<button type="button" class="mh-x" aria-label="삭제">×</button><b class="mh-sel-pr">' + won(r.total * q) + '</b></div>' +
+      '<div class="mh-sel-total">TOTAL <b>' + won(r.total * q) + '</b> <span>(' + q + '개)</span></div>';
+  }
+
+  // 장바구니·바로구매·네이버페이 = 같은 카페24 요청, redirect 값만 다르다 (2 장바구니, 1 바로구매, naver_checkout 네이버페이)
+  function mhBuy(mode) {
+    var b = FOREIGN.r.buy, q = FOREIGN.qty;
+    var f = [['selected_item[]', q + '||' + b.code], ['relation_product', 'yes'], ['is_individual', 'F'], ['product_no', b.no], ['product_name', b.name],
+      ['main_cate_no', 0], ['display_group', 0], ['option_type', 'T'], ['product_min', 1], ['command', 'add'], ['has_option', b.opt ? 'T' : 'F'],
+      ['product_price', b.price], ['delvType', 'A'], ['redirect', mode], ['product_max_type', 'F'], ['product_max', -1], ['basket_type', 'A0000'],
+      ['prd_detail_ship_type', 'P'], ['quantity', q], ['is_direct_buy', 'F']];
+    if (b.opt) f.push(['optionids[]', 'option1'], ['needed[]', 'option1'], ['option1', b.opt]);
+    if (mode !== 2) f.push(['quantity_override_flag', mode === 'naver_checkout' ? 'T' : 'F']);
+    f.push(['is_cultural_tax', 'F']);
+    var body = f.map(function (x) { return encodeURIComponent(x[0]) + '=' + encodeURIComponent(x[1]); }).join('&');
+    var fallback = function () { location.href = href(b.no, b.opt ? FOREIGN.r.n : 0); };
+    fetch(PREFIX + '/exec/front/order/basket/', { method: 'POST', credentials: 'same-origin', body: body,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' } })
+      .then(function (res) { return res.json(); })
+      .then(function (j) {
+        if (!j || j.result !== 0) { if (j && j.alertMSG) alert(j.alertMSG); return fallback(); }
+        var order = PREFIX + '/order/orderform.html?basket_type=A0000&delvtype=A';
+        if (mode === 2) location.href = PREFIX + '/order/basket.html?&delvtype=A';
+        else if (mode === 1) location.href = j.isLogin === 'T' ? order : PREFIX + '/member/login.html?noMember=1&returnUrl=' + encodeURIComponent(order) + '&delvtype=A';
+        else {
+          var fm = document.createElement('form'); fm.method = 'POST'; fm.action = PREFIX + '/exec/front/order/navercheckout';
+          var i = document.createElement('input'); i.type = 'hidden'; i.name = 'analycis_form_data'; i.value = '{}';
+          fm.appendChild(i); document.body.appendChild(fm); fm.submit();
+        }
+      })
+      .catch(fallback);
+  }
+  // 구매 버튼 가로채기: 다른 상품 줄이 골라져 있을 때만. 클릭이 버튼에 닿기 전에(capture) 잡는다
+  function buyModeOf(el) {
+    for (var i = 0; el && el !== document.body && i < 6; i++, el = el.parentNode) {
+      var oc = (el.getAttribute && el.getAttribute('onclick')) || '';
+      if (/product_submit\(\s*1/.test(oc) || el.id === 'actionBuy') return 1;
+      if (/product_submit\(\s*2/.test(oc) || el.id === 'actionCart') return 2;
+      if (/nv_add_basket_1/.test(oc) || (el.className && /npay_btn_pay|npay_btn_link/.test(el.className))) return 'naver_checkout';
+      if (/product_submit\(/.test(oc)) return 'other';
+    }
+    return 0;
+  }
+  document.addEventListener('click', function (e) {
+    if (!FOREIGN) return;
+    var m = buyModeOf(e.target); if (!m) return;
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    if (m === 'other') location.href = href(FOREIGN.r.buy.no, FOREIGN.r.buy.opt ? FOREIGN.r.n : 0);   // 선물하기 등은 그 상품 페이지로
+    else mhBuy(m);
+  }, true);
+  // 네이버페이 버튼은 네이버 스크립트가 함수 참조로 붙이는 경우가 있어 함수도 감싼다
+  function wrapNaver() {
+    ['nv_add_basket_1_product', 'nv_add_basket_1_m_product'].forEach(function (k) {
+      var f = window[k]; if (typeof f !== 'function' || f.__mh) return;
+      var g = function () { if (FOREIGN) return mhBuy('naver_checkout'); return f.apply(this, arguments); };
+      g.__mh = 1; window[k] = g;
+    });
+  }
+  wrapNaver(); setTimeout(wrapNaver, 1500); setTimeout(wrapNaver, 4000);
+
+  var css = document.createElement('style');
+  css.textContent =
+    '.mh-list .mh-hide{display:none!important}.mh-list li.mh-gone{display:none!important}' +
+    '.mh-list ul{border:1px solid #e6e6e6;margin:0;padding:0;list-style:none}' +
+    '.mh-list li.custom-opt-item{display:block!important;padding:0!important;border:0!important;border-top:1px solid #e6e6e6!important;background:#fff;cursor:pointer}' +
+    '.mh-list li.custom-opt-item:first-child,.mh-list li.mh-gone+li{border-top:0!important}' +
+    // 디다 형식: 고른 줄은 진한 테두리 + 옅은 회색 바탕, 동그라미 없음
+    '.mh-list li.mh-on{background:#f5f5f5!important;box-shadow:inset 0 0 0 1.5px #1F110C}' +
+    '.mh-row{display:flex!important;align-items:center;gap:14px;padding:14px 16px;color:#1F110C;text-decoration:none}' +
+    '.mh-th{flex:none;width:64px;height:64px;display:flex;align-items:center;justify-content:center}.mh-th img{width:64px;height:64px;object-fit:contain}' +
+    '.mh-bd{flex:1;min-width:0;text-align:left}' +
+    '.mh-nm{display:block;font-size:14px;line-height:1.4;font-weight:500}' +
+    '.mh-pr{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 6px;margin-top:3px}' +
+    '.mh-won{font-size:16px;font-weight:700}' +
+    '.mh-pct{font-size:16px;font-weight:700;color:#E02E2E}' +
+    '.mh-pb{font-size:13px;color:#8a8a8a}' +
+    '.mh-note{display:block;font-size:12px;color:#8a8a8a;margin-top:2px}' +
+    '.mh-chips{flex:none;align-self:flex-start;display:flex;gap:4px;margin-top:2px}' +
+    '.mh-chip{font-style:normal;font-size:11px;font-weight:600;line-height:1;padding:4px 6px;border-radius:3px;background:#ededed;color:#555}' +
+    '.mh-chip-best{background:#E02E2E;color:#fff}.mh-chip-max{background:#1F110C;color:#fff}' +
+    // 혜택 줄
+    '.mh-perks{margin:10px 0 0;display:flex;flex-direction:column;gap:6px}.mh-perks-top{margin:10px 0 12px}' +
+    '.mh-perk{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#FEF7CC;border-radius:8px;color:#1F110C;text-decoration:none;font-size:13px}' +
+    '.mh-perk-join{background:#f5f5f5}' +
+    '.mh-k{flex:none;width:22px;height:22px;border-radius:50%;background:#FEE500;display:flex;align-items:center;justify-content:center}' +
+    '.mh-perk-t{flex:1;text-align:left}.mh-perk-t b{font-weight:700}' +
+    '.mh-perk-b{flex:none;font-size:12px;font-weight:600;padding:5px 10px;border-radius:14px;background:#1F110C;color:#fff}' +
+    '@media (max-width:767px){.mh-th,.mh-th img{width:54px;height:54px}.mh-row{gap:10px;padding:12px}.mh-won,.mh-pct{font-size:15px}.mh-pb{font-size:12px}}' +
+    '.mh-off{display:none!important}' +
+    // 카페24 원래 선택 칸(#totalProducts)과 같은 모양: 옅은 회색 둥근 칸, 이름 굵게 + 옵션 줄, 수량·삭제·가격 한 줄
+    '.mh-sel{margin:20px 0 0}.mh-sel-box{display:flex;align-items:center;background:#f9f9f9;border-radius:10px;padding:25px 30px;color:#1F110C}' +
+    '.mh-sel-nm{flex:1;font-size:14px;line-height:1.5;text-align:left}.mh-sel-nm strong{display:block;font-weight:600}.mh-sel-nm em{display:block;font-style:normal;font-size:13px;font-weight:400;color:#555}' +
+    '.mh-q{display:inline-flex;margin:0 12px}.mh-q button,.mh-q input{width:28px;height:28px;border:1px solid #e1e1e1;background:#fff;font-size:14px;color:#1F110C;padding:0;box-sizing:border-box;cursor:pointer}' +
+    '.mh-q input{width:36px;border-radius:4px;margin:0 2px;text-align:center;font-size:12px;cursor:text}' +
+    '.mh-x{border:0;background:none;font-size:20px;line-height:1;color:#b5b5b5;cursor:pointer;padding:0 14px 0 4px}' +
+    '.mh-sel-pr{font-size:13px;font-weight:600;min-width:62px;text-align:right}' +
+    '.mh-sel-total{text-align:right;padding:20px 0 0;font-size:13px;color:#1F110C}.mh-sel-total b{font-size:20px;font-weight:700;margin:0 2px 0 6px}.mh-sel-total span{color:#8a8a8a}' +
+    // 모바일 원래 칸: 이름 아래 수량, 가격 가운데, 삭제 오른쪽
+    '@media (max-width:767px){.mh-sel-box{display:grid;grid-template-columns:1fr auto auto;grid-template-areas:"nm pr x" "q pr x";padding:20px;row-gap:8px}' +
+    '.mh-sel-nm{grid-area:nm}.mh-q{grid-area:q;margin:0;justify-self:start}.mh-q input{margin:0;border-radius:0;border-left:0;border-right:0}' +
+    '.mh-sel-pr{grid-area:pr;font-size:12px;padding:0 18px}.mh-x{grid-area:x;padding:0;font-size:22px}}' +
+    '.mh-built{margin-bottom:12px}.mh-head{font-size:13px;font-weight:600;padding:0 0 8px}' +
+    '';
+  document.head.appendChild(css);
+
+  function run() { hideOldBanner(); if (!decorateList()) buildPlain(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  var tries = 0, t = setInterval(function () { if (decorateList() || ++tries > 20) { clearInterval(t); buildPlain(); } }, 250);
+})();
+</script>
+<!-- MH_OPTIONS END -->
