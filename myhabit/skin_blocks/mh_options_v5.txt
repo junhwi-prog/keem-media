@@ -23,7 +23,8 @@
   var SINGLE_OF = {};
   Object.keys(BUNDLES).forEach(function (s) { BUNDLES[s].forEach(function (b) { if (!SINGLE_OF[b]) SINGLE_OF[b] = +s; }); });
 
-  var PREFIX = (location.pathname.match(/^\/skin-skin\d+/) || [''])[0];
+  // 카페24 미리보기(/skin-skinNN)는 따옴표 안의 '/경로' 앞에 /skin-skinNN 을 스스로 붙인다. 실몰은 접두어가 없다 -> 코드에서 붙이지 않는다
+  var PREFIX = '';
   function won(n) { return Math.round(n).toLocaleString('ko-KR') + '원'; }
   function num(s) { return parseInt(String(s).replace(/[^\d]/g, ''), 10) || 0; }
   function meta(doc, p) { var m = doc.querySelector('meta[property="' + p + '"]'); return m ? m.getAttribute('content') : ''; }
@@ -36,7 +37,7 @@
 
   // 옵션별 실제 판매가: { 옵션값: {text, total, show} }
   function stockOf(html) {
-    var m = /option_stock_data\s*=\s*'((?:\\.|[^'\\])*)'/.exec(html || ''); if (!m) return {};
+    var m = /option_stock_data\s*=\s*[']([^\n]*?)['];/.exec(html || '');   // 카페24 편집기는 역슬래시 두 개를 하나로 줄인다 - 역슬래시 두 개 금지 if (!m) return {};
     try {
       var d = JSON.parse(JSON.parse('"' + m[1] + '"')), r = {};
       Object.keys(d).forEach(function (k) { var v = d[k]; if (v && v.option_value != null) r[k] = { text: v.option_value, total: +v.option_price, show: v.is_display === 'T' && v.is_selling === 'T' }; });
@@ -67,7 +68,7 @@
     if (SKIP[pg.no]) return null;
     var b = { no: pg.no, name: meta(pg.doc, 'og:title') || '', price: priceOf(pg.doc) };
     if (!key) {
-      var m = /item_code\s*=\s*'([^']+)'/.exec(pg.html || ''); if (!m) return null;
+      var m = /item_code\s*=\s*[']([^']+)[']/.exec(pg.html || ''); if (!m) return null;
       b.code = m[1]; b.opt = ''; return b;
     }
     var st = stockOf(pg.html), o = st[key], v = '';
