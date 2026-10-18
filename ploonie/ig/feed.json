@@ -1,17 +1,17 @@
 {
- "updated": "2026-10-17T23:00:06.835Z",
+ "updated": "2026-10-18T13:00:09.380Z",
  "posts": [
   {
    "code": "DegGsQySdKu",
    "file": "2026-10-15_DegGsQySdKu.jpg",
    "alt": "오늘은 어떤 스무디를 마셔볼까?",
-   "like": 18,
+   "like": 19,
    "cmt": 0,
    "video": true,
    "multi": false,
    "pos": "50% 45%",
    "date": "2026-10-15",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-10-15_DegGsQySdKu.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-10-15_DegGsQySdKu.jpg"
   },
   {
    "code": "DeN2FzkSMEY",
@@ -23,7 +23,7 @@
    "multi": false,
    "pos": "50% 62%",
    "date": "2026-10-08",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-10-08_DeN2FzkSMEY.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-10-08_DeN2FzkSMEY.jpg"
   },
   {
    "code": "Dd5RRKsS3mq",
@@ -35,7 +35,7 @@
    "multi": false,
    "pos": "50% 45%",
    "date": "2026-09-30",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-09-30_Dd5RRKsS3mq.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-09-30_Dd5RRKsS3mq.jpg"
   },
   {
    "code": "Ddp3peyn87V",
@@ -47,7 +47,7 @@
    "multi": false,
    "pos": "50% 20%",
    "date": "2026-09-24",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-09-24_Ddp3peyn87V.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-09-24_Ddp3peyn87V.jpg"
   },
   {
    "code": "Dda5ejtlCfZ",
@@ -59,7 +59,7 @@
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-09-18",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-09-18_Dda5ejtlCfZ.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-09-18_Dda5ejtlCfZ.jpg"
   },
   {
    "code": "DdYh2LwlOSY",
@@ -71,7 +71,7 @@
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-09-17",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@05e5335e339ed774fcd5f602dc3acf5058cd180c/ploonie/ig/2026-09-17_DdYh2LwlOSY.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9642e285725b146aa1ce4d96ca4951a59f4b3b8a/ploonie/ig/2026-09-17_DdYh2LwlOSY.jpg"
   }
  ]
 }
