@@ -1,41 +1,53 @@
 {
- "updated": "2026-10-20T11:00:06.502Z",
+ "updated": "2026-10-23T03:00:05.722Z",
  "posts": [
+  {
+   "code": "De0fShrHzuU",
+   "file": "2026-10-23_De0fShrHzuU.jpg",
+   "alt": "친구야, 나랑 플루니 마실래?",
+   "like": 13,
+   "cmt": 12,
+   "video": false,
+   "multi": false,
+   "pos": "50% 20%",
+   "date": "2026-10-23",
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-10-23_De0fShrHzuU.jpg"
+  },
   {
    "code": "DegGsQySdKu",
    "file": "2026-10-15_DegGsQySdKu.jpg",
    "alt": "오늘은 어떤 스무디를 마셔볼까?",
-   "like": 22,
+   "like": 23,
    "cmt": 0,
    "video": true,
    "multi": false,
    "pos": "50% 45%",
    "date": "2026-10-15",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-10-15_DegGsQySdKu.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-10-15_DegGsQySdKu.jpg"
   },
   {
    "code": "DeN2FzkSMEY",
    "file": "2026-10-08_DeN2FzkSMEY.jpg",
    "alt": "매일 즐기는 플루니 스무디,",
-   "like": 31,
+   "like": 32,
    "cmt": 0,
    "video": true,
    "multi": false,
    "pos": "50% 62%",
    "date": "2026-10-08",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-10-08_DeN2FzkSMEY.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-10-08_DeN2FzkSMEY.jpg"
   },
   {
    "code": "Dd5RRKsS3mq",
    "file": "2026-09-30_Dd5RRKsS3mq.jpg",
    "alt": "건강한 신호가 켜지는 순간",
-   "like": 31,
+   "like": 32,
    "cmt": 0,
    "video": true,
    "multi": false,
    "pos": "50% 45%",
    "date": "2026-09-30",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-09-30_Dd5RRKsS3mq.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-09-30_Dd5RRKsS3mq.jpg"
   },
   {
    "code": "Ddp3peyn87V",
@@ -47,7 +59,7 @@
    "multi": false,
    "pos": "50% 20%",
    "date": "2026-09-24",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-09-24_Ddp3peyn87V.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-09-24_Ddp3peyn87V.jpg"
   },
   {
    "code": "Dda5ejtlCfZ",
@@ -59,19 +71,7 @@
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-09-18",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-09-18_Dda5ejtlCfZ.jpg"
-  },
-  {
-   "code": "DdYh2LwlOSY",
-   "file": "2026-09-17_DdYh2LwlOSY.jpg",
-   "alt": "핑크 스무디, 살까 말까 고민 중이라면?",
-   "like": 11,
-   "cmt": 0,
-   "video": false,
-   "multi": true,
-   "pos": "50% 0%",
-   "date": "2026-09-17",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@c8e2fdc31898632e380984505464a63ebdae7df1/ploonie/ig/2026-09-17_DdYh2LwlOSY.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@9e193fcde6dd6884ccdafec54e2697eb4e4fb593/ploonie/ig/2026-09-18_Dda5ejtlCfZ.jpg"
   }
  ]
 }
