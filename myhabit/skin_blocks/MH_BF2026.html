@@ -74,6 +74,7 @@
 
   .dev{max-width:720px;margin:0 auto;padding:14px 16px 40px;font:12px/1.7 Pretendard,sans-serif;color:#777}
   .dev a{color:#bbb}
+  #bfd section{margin:0 !important}
 </style>
 <div id="bfd" style="display:none">
   <div class="slab">
@@ -123,6 +124,10 @@
   if (!BF_ON) { root.parentNode.removeChild(root); return; }
   var top = document.querySelector('.xans-product-headcategory.product_top_image') || document.querySelector('.xans-project-list');
   if (top) { top.parentNode.insertBefore(root, top); if (/product_top_image/.test(top.className)) top.style.display = 'none'; }
+  // 카페24 편집기가 저장할 때 그림 뒤에 빈칸 글자를 끼워 넣어 그림 사이가 벌어진다(10/27) → 빈 글자 조각을 지운다
+  [root].concat([].slice.call(root.querySelectorAll('.slab'))).forEach(function (el) {
+    [].slice.call(el.childNodes).forEach(function (n) { if (n.nodeType === 3 && !n.nodeValue.trim()) el.removeChild(n); });
+  });
   root.style.display = '';
   // ---------- 공통: 시각 ----------
   var OPEN = new Date('2026-11-01T00:00:00+09:00').getTime();
