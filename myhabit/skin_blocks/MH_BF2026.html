@@ -281,7 +281,7 @@
   var area = document.getElementById('area'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var lprize = document.getElementById('lprize'), lbl = document.getElementById('lbl'), lhint = document.getElementById('lhint'), lafter = document.getElementById('lafter');
   var PX = 4;                                   // 은박 한 칸 = 화면 4px (도트 느낌)
-  var W, H, done = false, last = null, down = false, token = null, secretUrl = '', prizeKey = '';
+  var W, H, done = false, last = null, down = false, waitReveal = false, token = null, secretUrl = '', prizeKey = '';
   // state: demo(시안) · loading · guest(비회원) · closed · ready(긁기 전, 아직 안 뽑음) · asking(서버 응답 대기) · result(경품 정해짐)
   var state = LOTTO_API ? 'loading' : 'demo';
 
@@ -354,10 +354,12 @@
     });
   }
   function draw() { // 처음 손가락을 대는 순간 서버에 뽑기 — 응답 전엔 안 긁힌다(손가락을 대고 있으면 응답 오자마자 이어서 긁힘)
-    state = 'asking'; lbl.textContent = '두근두근…';
+    state = 'asking'; lbl.textContent = '두근두근…'; waitReveal = false;
+    lprize.innerHTML = '<div class="v">두근두근…</div>';
     api('POST').then(function (o) {
       if (o.status !== 200) return fail(o.status, o.j);
       secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; lbl.classList.add('bf-x');
+      if (waitReveal) reveal();
     }).catch(function () { fail(0, {}); });
   }
   function scratch(cx, cy) {
@@ -376,7 +378,7 @@
     for (var i = 3; i < d.length; i += 16) if (d[i] === 0) n++;
     return n / (d.length / 16);
   }
-  function canScratch() { return state === 'demo' || state === 'result'; }
+  function canScratch() { return state === 'demo' || state === 'result' || state === 'asking'; }   // 응답 기다리는 동안에도 긁힘(경품은 응답 뒤에 깔림)
   function goLogin() { location.href = LOGIN_URL + '?returnUrl=' + encodeURIComponent(location.pathname + location.search + '#lotto'); }
   function resetDemo() { var keys = Object.keys(LOOK); setPrize(keys[Math.floor(Math.random() * keys.length)]); foil('여기를 긁어요'); lafter.innerHTML = ''; lhint.innerHTML = '손가락으로 <b>은색 부분</b>을 긁어 보세요'; }
   cv.addEventListener('pointerdown', function (e) {
@@ -387,7 +389,7 @@
     if (canScratch()) { lbl.classList.add('bf-x'); scratch(e.clientX, e.clientY); }
   });
   cv.addEventListener('pointermove', function (e) { if (down && !done && canScratch()) scratch(e.clientX, e.clientY); });
-  cv.addEventListener('pointerup', function () { down = false; last = null; if (!done && canScratch() && cleared() > .5) reveal(); });
+  cv.addEventListener('pointerup', function () { down = false; last = null; if (!done && canScratch() && cleared() > .5) { if (state === 'asking') waitReveal = true; else reveal(); } });
   lafter.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('[data-act]'); if (!a) return;
     e.preventDefault();
