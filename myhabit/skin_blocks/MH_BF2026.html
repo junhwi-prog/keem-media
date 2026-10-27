@@ -281,7 +281,7 @@
   var area = document.getElementById('area'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
   var lprize = document.getElementById('lprize'), lbl = document.getElementById('lbl'), lhint = document.getElementById('lhint'), lafter = document.getElementById('lafter');
   var PX = 4;                                   // 은박 한 칸 = 화면 4px (도트 느낌)
-  var W, H, done = false, last = null, down = false, waitReveal = false, token = null, secretUrl = '', prizeKey = '';
+  var cafe = null, W, H, done = false, last = null, down = false, waitReveal = false, token = null, secretUrl = '', prizeKey = '';
   // state: demo(시안) · loading · guest(비회원) · closed · ready(긁기 전, 아직 안 뽑음) · asking(서버 응답 대기) · result(경품 정해짐)
   var state = LOTTO_API ? 'loading' : 'demo';
 
@@ -330,7 +330,7 @@
   }
   function api(method) {
     var url = LOTTO_API + (method === 'GET' ? '?token=' + encodeURIComponent(token) : '');
-    return fetch(url, method === 'GET' ? { cache: 'no-store' } : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) })
+    return fetch(url, method === 'GET' ? { cache: 'no-store' } : { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ token: token }) })
       .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); });
   }
   function fail(st, j) {
@@ -342,7 +342,7 @@
   function startLive() {
     setPrize(''); foil('불러오는 중');
     if (!window.CAFE24API) { state = 'closed'; foil('잠시 후 다시'); return; }
-    var C = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-06-01' });
+    var C = cafe = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-06-01' });
     C.getEncryptedMemberId(C24_CLIENT_ID, function (err, res) {
       if (err || !res || !res.member_id) return fail(401, {}); // 비회원
       token = res.member_id;
@@ -353,10 +353,17 @@
       }).catch(function () { fail(0, {}); });
     });
   }
+  function freshToken() {
+    return new Promise(function (res) {
+      if (!cafe) return res();
+      cafe.getEncryptedMemberId(C24_CLIENT_ID, function (err, r) { if (!err && r && r.member_id) token = r.member_id; res(); });
+      setTimeout(res, 3000);
+    });
+  }
   function draw() { // 처음 손가락을 대는 순간 서버에 뽑기 — 응답 전엔 안 긁힌다(손가락을 대고 있으면 응답 오자마자 이어서 긁힘)
     state = 'asking'; lbl.textContent = '두근두근…'; waitReveal = false;
     lprize.innerHTML = '<div class="v">두근두근…</div>';
-    api('POST').then(function (o) {
+    freshToken().then(function () { return api('POST'); }).then(function (o) {
       if (o.status !== 200) return fail(o.status, o.j);
       secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; lbl.classList.add('bf-x');
       if (waitReveal) reveal();
