@@ -99,7 +99,7 @@
       <ul>
         <li>회원 1인 하루 1장 · 매일 0시에 새 복권이 들어와요.</li>
         <li>할인 쿠폰(1천~1만 원), 효소 맥스 증정, 시크릿 코드 중 하나가 꼭 나와요.</li>
-        <li>쿠폰은 받은 날 자정까지 쓸 수 있어요. 100원딜·8,900원 특가엔 쓸 수 없어요.</li>
+        <li>쿠폰은 받은 때부터 24시간 동안 쓸 수 있어요. 100원딜·8,900원 특가엔 쓸 수 없어요.</li>
         <li>시크릿 코드는 1인 1회만 나와요. 처음 가입하신 분은 첫 복권에서 시크릿 코드 확정!</li>
         <li>하루 수량이 모두 나간 쿠폰은 나오지 않을 수 있어요.</li>
       </ul>
@@ -234,8 +234,8 @@
   // ---------- 2) 복권 ----------
   // LOTTO_API 가 비어 있으면 시안 모드(아무 경품이나 무작위). 채우면 실제 모드:
   //   카페24 CAFE24API.getEncryptedMemberId 로 서명된 회원 토큰을 받아 복권 서버에 보내고, 서버가 정한 경품만 보여 준다(화면은 결과를 못 바꾼다)
-  var LOTTO_API = '';            // 예: 'https://(배포 주소)/api/draw'
-  var C24_CLIENT_ID = '';        // 복권용 카페24 앱 client_id
+  var LOTTO_API = 'https://myhabit-bf-lottery.netlify.app/api/draw';
+  var C24_CLIENT_ID = 'c5vDwIhQJhsvOAjEClIyIB';   // 복권용 카페24 앱 BF_LOTTO
   var JOIN_URL = '/member/agreement.html', LOGIN_URL = '/member/login.html', COUPON_URL = '/myshop/coupon/coupon.html';
 
   var PAL = { o: '#1A1A1A' };
@@ -266,11 +266,11 @@
   var GIFT = ['............', '..oo....oo..', '.ohho..ohho.', '..oohoohoo..', 'oooooooooooo', 'ohhhhfshhhho', 'oooooooooooo', '.offffsffffo', '.offffsffffo', '.offffsffffo', '.oooooooooo.', '............'];
   // 서버 경품 키 → 그림·문구 (이미지 경품 목록과 같은 이름: 경품 1 시크릿 코드 · 경품 2 할인 쿠폰 · 경품 3 효소 맥스)
   var LOOK = {
-    c1000: { svg: sprite(COIN, { f: '#D9893B', h: '#F7C08A', s: '#9A5420' }), v: '1,000원 쿠폰', c: '3만 원 이상 구매 시 · 오늘 자정까지' },
-    c3000: { svg: sprite(COIN, { f: '#C9CDD6', h: '#FFFFFF', s: '#7E8594' }), v: '3,000원 쿠폰', c: '5만 원 이상 구매 시 · 오늘 자정까지' },
-    c5000: { svg: sprite(COIN, { f: '#F6C531', h: '#FFF1A6', s: '#B5850A' }), v: '5,000원 쿠폰', c: '10만 원 이상 구매 시 · 오늘 자정까지' },
-    c10000: { svg: sprite(GEM, { f: '#FF0A3C', h: '#FFC2CF', s: '#B0002A' }), v: '10,000원 쿠폰', c: '15만 원 이상 구매 시 · 오늘 자정까지' },
-    max: { svg: sprite(GIFT, { f: '#FF0A3C', h: '#FFFFFF', s: '#FFC2CF' }), v: '효소 맥스 증정', c: '<b>22,900원 상당</b> · 3만 원 이상 구매 시 · 11/10까지' },   // 9입 판매가 22,900(10/19 복권 설계 — 상품 쿠폰 전액)
+    c1000: { svg: sprite(COIN, { f: '#D9893B', h: '#F7C08A', s: '#9A5420' }), v: '1,000원 쿠폰', c: '3만 원 이상 구매 시 · 받은 때부터 24시간' },
+    c3000: { svg: sprite(COIN, { f: '#C9CDD6', h: '#FFFFFF', s: '#7E8594' }), v: '3,000원 쿠폰', c: '5만 원 이상 구매 시 · 받은 때부터 24시간' },
+    c5000: { svg: sprite(COIN, { f: '#F6C531', h: '#FFF1A6', s: '#B5850A' }), v: '5,000원 쿠폰', c: '10만 원 이상 구매 시 · 받은 때부터 24시간' },
+    c10000: { svg: sprite(GEM, { f: '#FF0A3C', h: '#FFC2CF', s: '#B0002A' }), v: '10,000원 쿠폰', c: '15만 원 이상 구매 시 · 받은 때부터 24시간' },
+    max: { svg: sprite(GIFT, { f: '#FF0A3C', h: '#FFFFFF', s: '#FFC2CF' }), v: '효소 맥스 증정', c: '<b>22,900원 상당</b> · 3만 원 이상 구매 시 · 받은 때부터 24시간' },   // 9입 판매가 22,900(10/19 복권 설계 — 상품 쿠폰 전액)
     hidden: { svg: sprite(KEY, { f: '#C9CDD6', h: '#FFFFFF', s: '#7E8594' }), v: '<em>시크릿 코드</em> 당첨!', c: '인기 제품을 최저가로 · 1인 1회' }
   };
 
