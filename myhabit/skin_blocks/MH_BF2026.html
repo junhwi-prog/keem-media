@@ -336,13 +336,14 @@
   function fail(st, j) {
     setPrize('');
     if (st === 403 && j.error === 'closed') { state = 'closed'; foil('11월 1일 0시 오픈'); lhint.innerHTML = '행사가 열리면 <b>매일 한 장</b>씩 긁을 수 있어요'; return; }
+    if (st === 503 && j.error === 'paused') { state = 'closed'; foil('잠시 점검 중'); lhint.innerHTML = '잠시 후 <b>다시 열어</b> 주세요 · 오늘 복권은 그대로 남아 있어요'; return; }
     if (st === 401) { state = 'guest'; token = null; foil('로그인하고 긁어요'); lhint.innerHTML = '회원이면 <b>하루 한 장</b>, 꽝 없음'; lafter.innerHTML = afterHtml(); return; }
     state = 'ready'; foil('다시 긁어 주세요'); lhint.innerHTML = '잠깐 연결이 안 됐어요. <b>다시 긁으면</b> 돼요'; // 서버가 실패하면 오늘 장은 안 쓴 것으로 되돌려져 있다
   }
   function startLive() {
     setPrize(''); foil('불러오는 중');
     if (!window.CAFE24API) { state = 'closed'; foil('잠시 후 다시'); return; }
-    var C = cafe = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-06-01' });
+    var C = cafe = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-09-01' });
     C.getEncryptedMemberId(C24_CLIENT_ID, function (err, res) {
       if (err || !res || !res.member_id) return fail(401, {}); // 비회원
       token = res.member_id;
