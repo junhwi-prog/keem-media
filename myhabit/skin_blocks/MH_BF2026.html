@@ -1,0 +1,399 @@
+<!-- MH_BF2026 블프 기획전 페이지 시작 (2026-10-27, 229번 기획전에서만 보임 · 이 블록만 지우면 원상복구) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.39.3/dist/galmuri.css">
+<style>
+  #bfd{--bg:#101010;--red:#FF0A3C;--gray:#8E8E8E;max-width:720px;margin:0 auto;background:var(--bg);font-family:Pretendard,'Malgun Gothic',sans-serif;container-type:inline-size;color:#fff;-webkit-font-smoothing:antialiased}
+  #bfd *{box-sizing:border-box}
+  #bfd img.full{display:block;width:100%;height:auto}
+  #bfd .slab{position:relative}
+
+  /* 1) 시계 — 1000 너비 기준 좌표를 cqw 로(1cqw = 원본 10px). 숫자는 한 자리씩 칸(.d)에 넣고, 바뀌면 새 숫자가 위에서 내려오고 옛 숫자는 아래로 빠진다 */
+  #bfd .clk{position:absolute;left:0;right:0;top:27.8652%;height:6.1517%;background:var(--bg);font-variant-numeric:tabular-nums}
+  #bfd .clk .d{position:absolute;width:7.6cqw;margin-left:-3.8cqw;top:2.6cqw;height:13.2cqw;overflow:hidden;
+    -webkit-mask-image:linear-gradient(transparent 0,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(transparent 0,#000 12%,#000 88%,transparent 100%)}
+  #bfd .clk .d span{position:absolute;left:0;right:0;top:.66cqw;text-align:center;font-size:11.95cqw;font-weight:500;line-height:1;color:#fff;
+    transition:transform .7s cubic-bezier(.22,1,.36,1),opacity .7s cubic-bezier(.22,1,.36,1),color .6s}
+  #bfd .clk .d span.in{transform:translateY(-70%);opacity:0}
+  #bfd .clk .d span.out{transform:translateY(70%);opacity:0}
+  #bfd .clk .c{position:absolute;width:1cqw;height:1cqw;background:var(--gray);animation:bfdcol 1s ease-in-out infinite}
+  @keyframes bfdcol{0%,100%{opacity:1}50%{opacity:.35}}
+  #bfd .clk .l{position:absolute;width:16cqw;margin-left:-8cqw;top:15.05cqw;text-align:center;font-size:2.95cqw;font-weight:500;line-height:1;color:var(--gray)}
+  #bfd .clk .cap{position:absolute;left:0;right:0;top:1cqw;text-align:center;font-size:2.3cqw;font-weight:700;color:var(--red);letter-spacing:.02em}
+  #bfd .clk.hot .d span{color:var(--red)}
+
+  /* 2) 복권 — 기획전_시안 도트 복권(스크래치_시안.html 톤) 그대로, 색만 상세에 맞춤. 이름이 겹치지 않게 전부 #lotto 안에서만 */
+  #lotto{--edge:#000;--pan:#FF0A3C;--pan2:#B0002A;--panh:#FF6F8C;--pink:#FFC2CF;--win:#F2EEEC;--win2:#CFC8C5;
+    font-family:Galmuri11,monospace;-webkit-font-smoothing:none;color:#fff;padding:0 0 46px;background:var(--bg)}
+  #lotto .px{clip-path:polygon(0 8px,4px 8px,4px 4px,8px 4px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 4px) calc(100% - 8px),calc(100% - 4px) calc(100% - 4px),calc(100% - 8px) calc(100% - 4px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 8px),0 calc(100% - 8px))}
+  #lotto .lcard{position:relative;width:330px;max-width:calc(100% - 36px);margin:0 auto;background:var(--pan);border:4px solid var(--edge);padding:10px;box-shadow:inset 4px 4px 0 var(--panh),inset -4px -4px 0 var(--pan2),0 0 0 2px #3A0010,0 0 26px rgba(255,10,60,.45)}
+  #lotto .lhd{display:flex;justify-content:space-between;align-items:center;background:#111;border:2px solid #000;padding:6px 10px;color:var(--pink);font-size:12px}
+  #lotto .lhd b{font-family:Galmuri11;font-weight:700;color:#fff}
+  #lotto .bulbs{display:flex;gap:6px}
+  #lotto .bulb{width:8px;height:8px;background:#5A1020}
+  #lotto .bulb.on{background:#fff;box-shadow:inset -2px -2px 0 var(--pink)}
+  #lotto .area{position:relative;margin-top:10px;height:180px;border:4px solid var(--edge);background:var(--win);overflow:hidden;box-shadow:inset 0 6px 0 var(--win2)}
+  #lotto .lprize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#111}
+  #lotto .lprize .ic svg{width:44px;height:44px}
+  #lotto .lprize .v{font-family:Galmuri14;font-weight:700;font-size:28px;line-height:1.1;margin-top:4px}
+  #lotto .lprize .v em{font-style:normal;color:var(--pan)}
+  #lotto .lprize .c{font-family:Galmuri9;font-size:11.5px;margin-top:4px;color:#3A3A3A}
+  #lotto .lprize .c b{color:var(--pan);font-weight:700}
+  #lotto .lbl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#111;color:#fff;font-family:Galmuri11;font-weight:700;font-size:15px;padding:7px 14px 5px;border:3px solid #000;box-shadow:inset -3px -3px 0 #000,inset 3px 3px 0 #333,4px 4px 0 var(--pan);pointer-events:none;white-space:nowrap;z-index:2}
+  #lotto .lbl.bf-x{display:none}
+  #lotto canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;touch-action:none;cursor:pointer}
+  #lotto .stub{display:flex;justify-content:space-between;margin-top:10px;font-family:Galmuri9;font-size:10.5px;color:#2A0008}
+  #lotto .stub span{background:#FFE1E7;border:2px solid #000;padding:3px 6px}
+  #lotto .hint{text-align:center;font-size:12px;color:#BDBDBD;margin-top:18px}
+  #lotto .hint b{color:#fff}
+  #lotto .hint em{font-style:normal;color:var(--pink)}
+  #lotto .lbtn{display:block;margin:12px auto 0;width:78%;font-family:Galmuri14;font-weight:700;font-size:17px;border:4px solid #000;padding:9px 0;cursor:pointer;text-align:center;text-decoration:none}
+  #lotto .lbtn.k{background:#FEE500;color:#191919;box-shadow:inset 4px 4px 0 #FFF59A,inset -4px -4px 0 #C9B600,0 5px 0 #000}
+  #lotto .lbtn.s{background:#2A2A2A;color:#fff;font-size:14px;box-shadow:inset 3px 3px 0 #444,inset -3px -3px 0 #1A1A1A,0 4px 0 #000}
+  #lotto .lbtn.go{background:var(--pan);color:#fff;box-shadow:inset 4px 4px 0 var(--panh),inset -4px -4px 0 var(--pan2),0 5px 0 #000}
+  #lotto .lnote{margin:24px 20px 0;background:#1A1A1A;border:4px solid #000;padding:14px 14px 12px;box-shadow:inset 3px 3px 0 #2A2A2A}
+  #lotto .lnote h4{margin:0 0 6px;font-family:Galmuri11;font-weight:700;font-size:14px;color:#fff}
+  #lotto .lnote ul{margin:0;padding:0}
+  #lotto .lnote li{list-style:none;font-family:Galmuri9;font-size:11px;line-height:1.8;color:#BDBDBD;padding-left:12px;position:relative;word-break:keep-all}
+  #lotto .lnote li:before{content:'';position:absolute;left:0;top:7px;width:4px;height:4px;background:var(--pan)}
+  .bfd-sp{position:fixed;width:8px;height:8px;z-index:99;pointer-events:none;animation:bfdsp 1.4s steps(7) forwards}
+  @keyframes bfdsp{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+
+  /* 3) 주차판 조각 + 구매 버튼 — 버튼은 이미지 속 '시크릿 블프 제품 전체보기' 버튼과 같은 치수(1000 기준 x 35~960, 높이 114, 빨강 255·4·49, 글자 Pretendard Bold 42 자간 -1%, 흰 원 38 안 빨간 꺾쇠) */
+  #bfd .cut{position:relative;overflow:hidden}
+  #bfd .cut .wimg{position:absolute;left:0;top:0;width:100%;height:auto;display:block}
+  #bfd .hot{position:absolute;display:none;cursor:pointer}
+  #bfd .lnk{position:absolute;display:block;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  #bfd .mem{position:relative}
+  #bfd .bwrap{background:var(--bg)}
+  #bfd .bwrap.b2{padding-bottom:1.5cqw}
+  #bfd .bbtn{display:flex;align-items:center;justify-content:center;gap:2cqw;width:92.5cqw;height:11.4cqw;margin:0 0 0 3.5cqw;border-radius:5.7cqw;background:#FF0431;color:#fff;font-weight:700;font-size:4.2cqw;letter-spacing:-.01em;text-decoration:none;-webkit-tap-highlight-color:transparent}
+  #bfd .bbtn i{flex:none;width:3.8cqw;height:3.8cqw;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+  #bfd .bbtn i svg{width:1.9cqw;height:1.9cqw}
+  #bfd .bbtn.bf-x{background:#3A3A3A;color:#A8A8A8;pointer-events:none}
+  #bfd .bbtn.bf-x i{display:none}
+
+  .dev{max-width:720px;margin:0 auto;padding:14px 16px 40px;font:12px/1.7 Pretendard,sans-serif;color:#777}
+  .dev a{color:#bbb}
+</style>
+<div id="bfd" style="display:none">
+  <div class="slab">
+    <img class="full" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/top_a.jpg" alt="Secret BLACK FRIDAY 1년에 단 한 번 · 역대급 혜택 · EVENT 1 꽝없는 복권">
+    <div class="clk" id="bfd-clk"></div>
+  </div>
+
+  <section id="lotto">
+    <div class="lcard">
+      <div class="lhd"><b>BLACK FRIDAY</b><div class="bulbs" id="bulbs"></div><span id="lno">No.1101</span></div>
+      <div class="area" id="area">
+        <div class="lprize" id="lprize"></div>
+        <canvas id="cv"></canvas>
+        <div class="lbl" id="lbl">여기를 긁어요</div>
+      </div>
+      <div class="stub"><span>쿠폰 또는 시크릿 코드</span><span>꽝 없음</span></div>
+    </div>
+    <p class="hint" id="lhint">손가락으로 <b>은색 부분</b>을 긁어 보세요</p>
+    <div id="lafter"></div>
+    <div class="lnote">
+      <h4>이벤트 유의사항</h4>
+      <ul>
+        <li>회원 1인 하루 1장 · 매일 0시에 새 복권이 들어와요.</li>
+        <li>할인 쿠폰(1천~1만 원), 효소 맥스 증정, 시크릿 코드 중 하나가 꼭 나와요.</li>
+        <li>쿠폰은 받은 날 자정까지 쓸 수 있어요. 100원딜·8,900원 특가엔 쓸 수 없어요.</li>
+        <li>시크릿 코드는 1인 1회만 나와요. 처음 가입하신 분은 첫 복권에서 시크릿 코드 확정!</li>
+        <li>하루 수량이 모두 나간 쿠폰은 나오지 않을 수 있어요.</li>
+      </ul>
+    </div>
+  </section>
+
+  <img class="full" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/top_b.jpg" alt="경품 1 시크릿 코드 · 경품 2 할인 쿠폰 · 경품 3 효소 맥스 무료 증정">
+  <!-- 주차판 이미지를 세 조각으로 잘라 사이에 구매 버튼 2개를 끼운다(이미지는 한 장, 조각마다 위치만 옮겨 보여 줌) -->
+  <div class="cut" style="aspect-ratio:1000/1462"><img class="wimg" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/cum_w1.jpg" alt="EVENT 2 매주 수요일 단돈 100원"><a class="hot" id="hot100" aria-label="이번 주 100원딜 상품"></a><i id="ev2" style="position:absolute;top:8cqw"></i></div>
+  <div class="bwrap"><a class="bbtn" id="btn100"></a></div>
+  <div class="cut" style="aspect-ratio:1000/2210"><img class="wimg" style="top:-146.2cqw" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/cum_w1.jpg" alt="EVENT 3 깜짝 특가 8,900원"><a class="hot" id="hot89" aria-label="이번 주 깜짝특가 상품"></a><i id="ev3" style="position:absolute;top:38cqw"></i></div>
+  <div class="bwrap b2"><a class="bbtn" id="btn89"></a></div>
+  <div class="cut" style="aspect-ratio:1000/395"><img class="wimg" style="top:-367.2cqw" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/cum_w1.jpg" alt="시크릿 블프 제품 전체보기"><a class="lnk" href="/product/list.html?cate_no=183" aria-label="시크릿 블프 제품 전체보기" style="left:3.6%;width:92.8%;top:3%;height:30%"></a></div>
+  <div class="mem"><img class="full" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/member.jpg" alt="마이해빗 회원 추가 혜택 · 3초 회원가입하기"><a class="lnk" href="/product/list.html?cate_no=220" aria-label="균일가 6,900원 창고 대방출" style="left:4.8%;width:90.4%;top:61.4%;height:18.8%"></a><a class="lnk" href="/member/login.html" aria-label="3초 회원가입하기" style="left:4%;width:92%;top:84.8%;height:7.6%"></a></div>
+</div>
+<script>
+(function () {
+  // MH_BF2026: 229번 기획전에서만 켠다(미리보기 ?bfpreview=1). 아니면 블록을 지우고 끝
+  var BF_ON = /[/]229[/]|cate_no=229|[?&]bfpreview=1/.test(location.href);
+  var root = document.getElementById('bfd');
+  if (!root) return;
+  if (!BF_ON) { root.parentNode.removeChild(root); return; }
+  var top = document.querySelector('.xans-product-headcategory.product_top_image') || document.querySelector('.xans-project-list');
+  if (top) { top.parentNode.insertBefore(root, top); if (/product_top_image/.test(top.className)) top.style.display = 'none'; }
+  root.style.display = '';
+  // ---------- 공통: 시각 ----------
+  var OPEN = new Date('2026-11-01T00:00:00+09:00').getTime();
+  var END = new Date('2026-11-30T23:59:59+09:00').getTime();
+  var LOCAL = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+  var Q = new URLSearchParams(location.search);
+  var SIM = LOCAL ? (Q.get('d') || '') : '';
+  var OFFSET = SIM ? new Date(SIM + (SIM.length > 10 ? '' : 'T12:00:00') + '+09:00').getTime() - Date.now() : 0;
+  function nowMs() { return Date.now() + OFFSET; }
+  function two(n) { return (n < 10 ? '0' : '') + n; }
+  function kst(ms) { var d = new Date(ms + 9 * 3600000); return { m: d.getUTCMonth() + 1, d: d.getUTCDate() }; }
+
+  // ---------- 1) 시계 ----------
+  // 원본 측정(1000px 기준): 숫자 한 자리 가운데 143.5·211.5 / 358.5·427.5 / 574.5·642.5 / 789.5·858.5, 숫자 윗변 1041,
+  // 콜론 10px 네모(x 281·496·712, y 1060·1111), 라벨 가운데 174·394.5·610·827.5
+  var clk = document.getElementById('bfd-clk');
+  var DX = [143.5, 211.5, 358.5, 427.5, 574.5, 642.5, 789.5, 858.5], LX = [174, 394.5, 610, 827.5], LB = ['DAY', 'HRS', 'MIN', 'SEC'], COL = [281, 496, 712];
+  var h = '<div class="cap" id="bfd-cap"></div>';
+  DX.forEach(function (x) { h += '<div class="d" style="left:' + x / 10 + 'cqw"><span>0</span></div>'; });
+  LX.forEach(function (x, i) { h += '<div class="l" style="left:' + x / 10 + 'cqw">' + LB[i] + '</div>'; });
+  COL.forEach(function (x) { h += '<i class="c" style="left:' + x / 10 + 'cqw;top:6.8cqw"></i><i class="c" style="left:' + x / 10 + 'cqw;top:11.9cqw"></i>'; });
+  clk.innerHTML = h;
+  var cells = clk.querySelectorAll('.d'), cap = document.getElementById('bfd-cap'), shown = [];
+  function setDigit(i, ch) {
+    if (shown[i] === ch) return;
+    var cell = cells[i], old = cell.lastElementChild;
+    if (shown[i] === undefined) { old.textContent = ch; shown[i] = ch; return; }
+    shown[i] = ch;
+    var nu = document.createElement('span'); nu.className = 'in'; nu.textContent = ch;
+    cell.appendChild(nu);
+    void nu.offsetWidth;
+    nu.className = '';
+    old.className = 'out';
+    setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 750);
+  }
+  function tick() {
+    var t = nowMs(), pre = t < OPEN, s = Math.max(0, Math.floor(((pre ? OPEN : END) - t) / 1000));
+    var txt = two(Math.min(99, Math.floor(s / 86400))) + two(Math.floor(s % 86400 / 3600)) + two(Math.floor(s % 3600 / 60)) + two(s % 60);
+    for (var i = 0; i < 8; i++) setDigit(i, txt.charAt(i));
+    var hot = !pre && s > 0 && s < 3 * 86400;
+    clk.className = 'clk' + (hot ? ' hot' : '');
+    cap.textContent = pre ? '11월 1일(일) 0시 오픈까지' : s === 0 ? '블랙프라이데이가 끝났어요' : hot ? '마감 임박' : '';
+  }
+  // 초가 바뀌는 순간에 맞춰 돈다(setInterval 은 밀려서 가끔 한 초를 건너뛰어 보인다)
+  function loop() { tick(); setTimeout(loop, 1000 - (nowMs() % 1000) + 15); }
+  loop();
+
+  // ---------- 주차판 2번 이미지 ----------
+  var k = kst(nowMs()), wk = 1;
+  if (k.m === 11) wk = k.d <= 8 ? 1 : k.d <= 15 ? 2 : k.d <= 22 ? 3 : 4;
+  else if (k.m === 12) wk = 4;
+  // 누적 판(10/27): 지난 주 100원딜 칸은 '선착순 종료' 도장, 지난 주 8,900원 카드는 어둡게 + '종료', 이번 주 공개, 다음 주부터 '?'
+  //   평소 = cum_wN.jpg, 이번 주 100원딜 품절 = cum_wN_sold.jpg (_src/make_cumulative.py 로 만듦)
+  // 품절 판정은 서버 없이 그 주 100원딜 상품 페이지를 읽어 카페24 값 is_soldout_icon 이 'T' 인지 본다(같은 몰이라 가능). 못 읽으면 평소 판 그대로.
+  var STOCK_API = '';                   // 복권 서버 /api/stock 을 쓰면 이쪽이 먼저(비우면 상품 페이지 확인)
+  var DEAL_NO = ['506', '507', '502', '504'];  // 11.04 블루베리 · 11.11 효소습관 · 11.18 토마토 · 11.25 애사비 100원딜 상품번호(10/26 생성, 진열·판매 안 함 상태)
+  var weekImgs = document.querySelectorAll('#bfd .wimg');
+  function setWeekImg(f) { weekImgs.forEach(function (im) { im.src = 'https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/' + f; }); }
+  function soldOut() { setWeekImg('cum_w' + wk + '_sold.jpg'); gone100 = true; paintBtns(); }
+  setWeekImg('cum_w' + wk + '.jpg');
+
+  // ---------- 3) 구매 버튼: 그 주 딜 상품 페이지로 바로 보낸다(모음 페이지 없이, 10/27 사용자 결정) ----------
+  // 100원딜은 그 주 수요일 오전 10시부터, 깜짝특가는 11/1 0시부터 열린다. 그 전·품절·종료면 회색으로 막는다.
+  // 그 시각에 해당 상품 진열·판매가 켜져 있어야 한다(꺼져 있으면 손님이 '없는 페이지'를 본다).
+  var DEAL89 = ['501', '503', '508', '505'];   // 깜짝특가 8,900원 NMN · 파라 · 애사비 · 효소습관 플러스(10/26 생성)
+  var WED = ['11/4', '11/11', '11/18', '11/25'];
+  var open100 = new Date('2026-11-' + two(4 + (wk - 1) * 7) + 'T10:00:00+09:00').getTime();
+  var gone100 = false;
+  var PFX = LOCAL ? 'https://myhabit.shop' : '';
+  function pUrl(no) { return PFX + '/product/detail.html?product_no=' + no; }
+  var ARROW = '<i><svg viewBox="0 0 10 10"><path d="M3.6 1.8 6.8 5 3.6 8.2" fill="none" stroke="#FF0431" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>';
+  function setBtn(id, hotId, on, txt, no) {
+    var b = document.getElementById(id), h = document.getElementById(hotId);
+    b.className = 'bbtn' + (on ? '' : ' bf-x');
+    b.innerHTML = '<span>' + txt + '</span>' + (on ? ARROW : '');
+    if (on) { b.href = pUrl(no); h.href = pUrl(no); h.style.display = 'block'; }
+    else { b.removeAttribute('href'); h.removeAttribute('href'); h.style.display = 'none'; }
+  }
+  // 눌리는 카드 자리(1000 기준): 100원딜 달력 칸 x 48~273 · 283~508 · 519~744 · 754~979, y 700~999 / 8,900 카드 x 35~484 · 512~961, y 2482~2994 · 3036~3548
+  var CX = [48, 283, 519, 754], h100 = document.getElementById('hot100'), h89 = document.getElementById('hot89');
+  h100.style.cssText = 'left:' + CX[wk - 1] / 10 + 'cqw;width:22.5cqw;top:70cqw;height:30cqw';
+  h89.style.cssText = 'left:' + (wk % 2 ? 3.5 : 51.2) + 'cqw;width:45cqw;top:' + ((wk < 3 ? 2482 : 3036) - 1462) / 10 + 'cqw;height:51.2cqw';
+  function paintBtns() {
+    var t = nowMs(), end = t > END;
+    setBtn('btn100', 'hot100', !end && !gone100 && t >= open100,
+      end ? '이벤트가 끝났어요' : gone100 ? '이번 주 100원딜 선착순 마감' : t < open100 ? WED[wk - 1] + '(수) 오전 10시 오픈' : '100원딜 구매하러 가기', DEAL_NO[wk - 1]);
+    setBtn('btn89', 'hot89', !end && t >= OPEN,
+      end ? '이벤트가 끝났어요' : t < OPEN ? '11/1(일) 0시 오픈' : '깜짝특가 구매하러 가기', DEAL89[wk - 1]);
+  }
+  paintBtns();
+  setInterval(paintBtns, 30000);  // 페이지를 열어 둔 채 10시를 넘겨도 버튼이 열리게
+  if (/[?&]soldout=1/.test(location.search)) soldOut();
+  else if (STOCK_API && DEAL_NO[wk - 1] && window.fetch) {
+    fetch(STOCK_API, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.stock && j.stock[DEAL_NO[wk - 1]] === 0) soldOut();
+    }).catch(function () {});
+  } else if (!LOCAL && DEAL_NO[wk - 1] && window.fetch && nowMs() >= open100) {
+    fetch(pUrl(DEAL_NO[wk - 1]), { cache: 'no-store', credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (h) {
+      if (/is_soldout_icon *= *'T'/.test(h)) soldOut();
+    }).catch(function () {});
+  }
+  document.getElementById('lno').textContent = 'No.' + two(k.m) + two(k.d);
+
+  // ---------- 2) 복권 ----------
+  // LOTTO_API 가 비어 있으면 시안 모드(아무 경품이나 무작위). 채우면 실제 모드:
+  //   카페24 CAFE24API.getEncryptedMemberId 로 서명된 회원 토큰을 받아 복권 서버에 보내고, 서버가 정한 경품만 보여 준다(화면은 결과를 못 바꾼다)
+  var LOTTO_API = '';            // 예: 'https://(배포 주소)/api/draw'
+  var C24_CLIENT_ID = '';        // 복권용 카페24 앱 client_id
+  var JOIN_URL = '/member/agreement.html', LOGIN_URL = '/member/login.html', COUPON_URL = '/myshop/coupon/coupon.html';
+
+  var PAL = { o: '#1A1A1A' };
+  function sprite(rows, pal) {
+    var r = '';
+    rows.forEach(function (row, y) { row.split('').forEach(function (ch, x) {
+      var c = ch === '.' ? null : (pal[ch] || PAL[ch]);
+      if (c) r += '<rect x="' + x + '" y="' + y + '" width="1.02" height="1.02" fill="' + c + '"/>';
+    }); });
+    return '<svg viewBox="0 0 12 12" shape-rendering="crispEdges">' + r + '</svg>';
+  }
+  function coinRows() {
+    var rows = [];
+    for (var y = 0; y < 12; y++) {
+      var s = '';
+      for (var x = 0; x < 12; x++) {
+        var dx = x - 5.5, dy = y - 5.5, d = Math.hypot(dx, dy);
+        if (d > 5.9) s += '.'; else if (d > 4.9) s += 'o'; else if (d > 3.3 && d < 4.1) s += 's';
+        else if (dx + dy < -4.5) s += 'h'; else if (dx + dy > 4.5) s += 's'; else s += 'f';
+      }
+      rows.push(s);
+    }
+    return rows;
+  }
+  var COIN = coinRows();
+  var GEM = ['............', '...oooooo...', '..ohhffffo..', '.ohhffffsso.', 'oooooooooooo', '.ohffffffso.', '..ohffffso..', '...offffo...', '....offo....', '.....oo.....', '............', '............'];
+  var KEY = ['............', '...oooo.....', '..ohhffo....', '.ohf..fso...', '.of....fo...', '.ohf..fso...', '..offffoooooo', '...oooofffffo', '......ofo.ofo', '......oo..oo.', '............', '............'];
+  var GIFT = ['............', '..oo....oo..', '.ohho..ohho.', '..oohoohoo..', 'oooooooooooo', 'ohhhhfshhhho', 'oooooooooooo', '.offffsffffo', '.offffsffffo', '.offffsffffo', '.oooooooooo.', '............'];
+  // 서버 경품 키 → 그림·문구 (이미지 경품 목록과 같은 이름: 경품 1 시크릿 코드 · 경품 2 할인 쿠폰 · 경품 3 효소 맥스)
+  var LOOK = {
+    c1000: { svg: sprite(COIN, { f: '#D9893B', h: '#F7C08A', s: '#9A5420' }), v: '1,000원 쿠폰', c: '3만 원 이상 구매 시 · 오늘 자정까지' },
+    c3000: { svg: sprite(COIN, { f: '#C9CDD6', h: '#FFFFFF', s: '#7E8594' }), v: '3,000원 쿠폰', c: '5만 원 이상 구매 시 · 오늘 자정까지' },
+    c5000: { svg: sprite(COIN, { f: '#F6C531', h: '#FFF1A6', s: '#B5850A' }), v: '5,000원 쿠폰', c: '10만 원 이상 구매 시 · 오늘 자정까지' },
+    c10000: { svg: sprite(GEM, { f: '#FF0A3C', h: '#FFC2CF', s: '#B0002A' }), v: '10,000원 쿠폰', c: '15만 원 이상 구매 시 · 오늘 자정까지' },
+    max: { svg: sprite(GIFT, { f: '#FF0A3C', h: '#FFFFFF', s: '#FFC2CF' }), v: '효소 맥스 증정', c: '<b>22,900원 상당</b> · 3만 원 이상 구매 시 · 11/10까지' },   // 9입 판매가 22,900(10/19 복권 설계 — 상품 쿠폰 전액)
+    hidden: { svg: sprite(KEY, { f: '#C9CDD6', h: '#FFFFFF', s: '#7E8594' }), v: '<em>시크릿 코드</em> 당첨!', c: '인기 제품을 최저가로 · 1인 1회' }
+  };
+
+  var bulbs = document.getElementById('bulbs');
+  bulbs.innerHTML = [0, 1, 2, 3, 4, 5].map(function (i) { return '<span class="bulb' + (i % 2 ? '' : ' on') + '"></span>'; }).join('');
+  setInterval(function () { bulbs.querySelectorAll('.bulb').forEach(function (b) { b.classList.toggle('on'); }); }, 450);
+
+  var area = document.getElementById('area'), cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var lprize = document.getElementById('lprize'), lbl = document.getElementById('lbl'), lhint = document.getElementById('lhint'), lafter = document.getElementById('lafter');
+  var PX = 4;                                   // 은박 한 칸 = 화면 4px (도트 느낌)
+  var W, H, done = false, last = null, down = false, token = null, secretUrl = '', prizeKey = '';
+  // state: demo(시안) · loading · guest(비회원) · closed · ready(긁기 전, 아직 안 뽑음) · asking(서버 응답 대기) · result(경품 정해짐)
+  var state = LOTTO_API ? 'loading' : 'demo';
+
+  function foil(label) { // 은박 다시 칠하기
+    W = Math.round(area.clientWidth / PX); H = Math.round(area.clientHeight / PX);
+    cv.width = W; cv.height = H;
+    if (cv.getAnimations) cv.getAnimations().forEach(function (a) { a.cancel(); });
+    cv.style.opacity = 1;
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      var n = Math.random();
+      ctx.fillStyle = (x + y) % 9 === 0 ? '#D9DCE4' : n < .12 ? '#9EA3B0' : n < .24 ? '#C4C8D2' : '#B3B8C4';
+      ctx.fillRect(x, y, 1, 1);
+    }
+    ctx.fillStyle = '#A2A7B4';
+    for (var yy = 4; yy < H; yy += 14) for (var xx = (yy / 14) % 2 ? 2 : 9; xx < W; xx += 14) { ctx.fillRect(xx, yy, 4, 4); ctx.fillRect(xx + 1, yy - 1, 2, 6); ctx.fillRect(xx - 1, yy + 1, 6, 2); }
+    lbl.textContent = label; lbl.classList.remove('bf-x');
+    done = false; last = null;
+  }
+  function setPrize(key) { // 은박 아래에 경품을 깔아 둔다(실제 모드에선 서버 결과가 온 뒤에만)
+    prizeKey = key;
+    var L = LOOK[key];
+    lprize.innerHTML = L ? '<div class="ic">' + L.svg + '</div><div class="v">' + L.v + '</div><div class="c">' + L.c + '</div>' : '';
+  }
+  function afterHtml() {
+    if (state === 'guest') return '<a class="lbtn k" href="' + JOIN_URL + '">카카오로 1초 가입하고 긁기</a><a class="lbtn s" href="#" data-act="login">이미 회원이에요 · 로그인</a><p class="hint" style="margin-top:12px">처음 가입하면 첫 복권은 <em>시크릿 코드 확정</em></p>';
+    if (state === 'demo') return '<a class="lbtn s" href="#" data-act="again">다시 긁어 보기 (시안)</a>';
+    if (prizeKey === 'hidden') return '<a class="lbtn go" href="' + (secretUrl || '#') + '">시크릿 블프 입장하기</a><p class="hint" style="margin-top:12px">비밀 페이지예요 · 주소는 나만 알고 계세요</p>';
+    return '<a class="lbtn go" href="' + COUPON_URL + '">쿠폰 쓰러 가기</a><p class="hint" style="margin-top:12px">쿠폰함에 바로 넣어 드렸어요</p>';
+  }
+  function reveal(quiet) {
+    if (done) return; done = true;
+    if (cv.animate) cv.animate([{ opacity: 1 }, { opacity: 0 }], { duration: quiet ? 1 : 400, easing: 'steps(4)', fill: 'forwards' }); else cv.style.opacity = 0;
+    lbl.classList.add('bf-x');
+    lhint.innerHTML = prizeKey === 'hidden' ? '<em>시크릿 코드</em> 당첨! 시크릿 블프가 열렸어요' : '<b>' + LOOK[prizeKey].v + '</b> 당첨!';
+    lafter.innerHTML = afterHtml();
+    if (quiet) return;
+    var r = area.getBoundingClientRect();
+    for (var i = 0; i < 26; i++) {
+      var p = document.createElement('span'); p.className = 'bfd-sp';
+      var a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 110;
+      p.style.left = r.left + r.width / 2 + 'px'; p.style.top = r.top + r.height / 2 + 'px';
+      p.style.background = ['#FF0A3C', '#FFFFFF', '#FFC2CF', '#C9CDD6'][i % 4];
+      p.style.setProperty('--dx', Math.cos(a) * d + 'px'); p.style.setProperty('--dy', Math.sin(a) * d + 'px');
+      document.body.appendChild(p); setTimeout(function (el) { return function () { el.remove(); }; }(p), 1500);
+    }
+  }
+  function api(method) {
+    var url = LOTTO_API + (method === 'GET' ? '?token=' + encodeURIComponent(token) : '');
+    return fetch(url, method === 'GET' ? { cache: 'no-store' } : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) })
+      .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); });
+  }
+  function fail(st, j) {
+    setPrize('');
+    if (st === 403 && j.error === 'closed') { state = 'closed'; foil('11월 1일 0시 오픈'); lhint.innerHTML = '행사가 열리면 <b>매일 한 장</b>씩 긁을 수 있어요'; return; }
+    if (st === 401) { state = 'guest'; token = null; foil('로그인하고 긁어요'); lhint.innerHTML = '회원이면 <b>하루 한 장</b>, 꽝 없음'; lafter.innerHTML = afterHtml(); return; }
+    state = 'ready'; foil('다시 긁어 주세요'); lhint.innerHTML = '잠깐 연결이 안 됐어요. <b>다시 긁으면</b> 돼요'; // 서버가 실패하면 오늘 장은 안 쓴 것으로 되돌려져 있다
+  }
+  function startLive() {
+    setPrize(''); foil('불러오는 중');
+    if (!window.CAFE24API) { state = 'closed'; foil('잠시 후 다시'); return; }
+    var C = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-06-01' });
+    C.getEncryptedMemberId(C24_CLIENT_ID, function (err, res) {
+      if (err || !res || !res.member_id) return fail(401, {}); // 비회원
+      token = res.member_id;
+      api('GET').then(function (o) {
+        if (o.status !== 200) return fail(o.status, o.j);
+        if (o.j.drawn) { secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; reveal(true); lhint.innerHTML = '오늘 복권은 이미 긁었어요 · <b>내일 0시</b>에 새 장'; return; }
+        state = 'ready'; foil('여기를 긁어요');
+      }).catch(function () { fail(0, {}); });
+    });
+  }
+  function draw() { // 처음 손가락을 대는 순간 서버에 뽑기 — 응답 전엔 안 긁힌다(손가락을 대고 있으면 응답 오자마자 이어서 긁힘)
+    state = 'asking'; lbl.textContent = '두근두근…';
+    api('POST').then(function (o) {
+      if (o.status !== 200) return fail(o.status, o.j);
+      secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; lbl.classList.add('bf-x');
+    }).catch(function () { fail(0, {}); });
+  }
+  function scratch(cx, cy) {
+    var r = area.getBoundingClientRect();
+    var x = Math.floor((cx - r.left) / PX), y = Math.floor((cy - r.top) / PX);
+    var pts = [];
+    if (last) { var n = Math.max(Math.abs(x - last[0]), Math.abs(y - last[1])); for (var i = 1; i <= n; i++) pts.push([Math.round(last[0] + (x - last[0]) * i / n), Math.round(last[1] + (y - last[1]) * i / n)]); }
+    else pts.push([x, y]);
+    ctx.globalCompositeOperation = 'destination-out';
+    pts.forEach(function (pt) { for (var dy = -5; dy <= 5; dy++) for (var dx = -5; dx <= 5; dx++) if (dx * dx + dy * dy <= 26) ctx.fillRect(pt[0] + dx, pt[1] + dy, 1, 1); });
+    ctx.globalCompositeOperation = 'source-over';
+    last = [x, y];
+  }
+  function cleared() {
+    var d = ctx.getImageData(0, 0, W, H).data, n = 0;
+    for (var i = 3; i < d.length; i += 16) if (d[i] === 0) n++;
+    return n / (d.length / 16);
+  }
+  function canScratch() { return state === 'demo' || state === 'result'; }
+  function goLogin() { location.href = LOGIN_URL + '?returnUrl=' + encodeURIComponent(location.pathname + location.search + '#lotto'); }
+  function resetDemo() { var keys = Object.keys(LOOK); setPrize(keys[Math.floor(Math.random() * keys.length)]); foil('여기를 긁어요'); lafter.innerHTML = ''; lhint.innerHTML = '손가락으로 <b>은색 부분</b>을 긁어 보세요'; }
+  cv.addEventListener('pointerdown', function (e) {
+    if (done) return;
+    if (state === 'guest') { goLogin(); return; }
+    if (state === 'ready') draw();
+    down = true; last = null; cv.setPointerCapture(e.pointerId);
+    if (canScratch()) { lbl.classList.add('bf-x'); scratch(e.clientX, e.clientY); }
+  });
+  cv.addEventListener('pointermove', function (e) { if (down && !done && canScratch()) scratch(e.clientX, e.clientY); });
+  cv.addEventListener('pointerup', function () { down = false; last = null; if (!done && canScratch() && cleared() > .5) reveal(); });
+  lafter.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('[data-act]'); if (!a) return;
+    e.preventDefault();
+    if (a.getAttribute('data-act') === 'login') goLogin(); else resetDemo();
+  });
+  var started = false;
+  function start() { if (started) return; started = true; if (LOTTO_API) startLive(); else resetDemo(); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
+  setTimeout(start, 1500);
+
+  if (LOCAL && document.getElementById('bfd-dev')) document.getElementById('bfd-dev').innerHTML = '로컬 미리보기 · 날짜 바꿔 보기: <a href="?d=2026-10-31T23:59:40">오픈 직전</a> · <a href="?d=2026-11-04T10:00">1주</a> · <a href="?d=2026-11-12T15:00">2주</a> · <a href="?d=2026-11-18T15:00">3주</a> · <a href="?d=2026-11-28T15:00">마감 임박</a> · <a href="?">지금</a><br>복권은 시안 모드(무작위 경품). 서버 주소를 넣으면 실제 판정으로 바뀌어요.';
+})();
+</script>
+<!-- MH_BF2026 끝 -->
