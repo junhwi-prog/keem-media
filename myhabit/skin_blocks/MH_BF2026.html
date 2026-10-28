@@ -75,6 +75,17 @@
   .dev{max-width:720px;margin:0 auto;padding:14px 16px 40px;font:12px/1.7 Pretendard,sans-serif;color:#777}
   .dev a{color:#bbb}
   #bfd section{margin:0 !important}
+  /* 10/28 히든 당첨 팝업(사용자: 아래 입장 버튼을 못 볼 수도) — body 에 붙임 */
+  #bfd-pop{position:fixed;inset:0;z-index:100000;-webkit-user-select:none;user-select:none;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:20px;animation:bfdpopin .25s steps(3) both}
+  #bfd-pop .pc{position:relative;width:310px;max-width:100%;background:#FF0A3C;border:4px solid #000;padding:10px;box-shadow:inset 4px 4px 0 #FF6F8C,inset -4px -4px 0 #B0002A,0 8px 0 #000;font-family:Pretendard,'Malgun Gothic',sans-serif;animation:bfdpopup .35s steps(4) both}
+  #bfd-pop .pin{background:#F2EEEC;border:4px solid #000;padding:22px 16px 18px;text-align:center;color:#111}
+  #bfd-pop .pk{font-family:Galmuri11,Pretendard,sans-serif;font-weight:700;font-size:12px;letter-spacing:.2em;color:#FF0A3C}
+  #bfd-pop .pt{margin-top:8px;font-family:Galmuri14,Pretendard,sans-serif;font-weight:700;font-size:24px;line-height:1.25;color:#111}
+  #bfd-pop .pd{margin-top:10px;font-size:13.5px;line-height:1.55;color:#444;word-break:keep-all}
+  #bfd-pop .pgo{display:block;margin:18px auto 0;width:100%;font-family:Galmuri14,Pretendard,sans-serif;font-weight:700;font-size:17px;border:4px solid #000;padding:11px 0;text-align:center;text-decoration:none;background:#FF0A3C;color:#fff;box-shadow:inset 4px 4px 0 #FF6F8C,inset -4px -4px 0 #B0002A,0 5px 0 #000}
+  #bfd-pop .pno{display:inline-block;margin-top:14px;font-size:12px;color:#777;text-decoration:underline;cursor:pointer;background:none;border:0;font-family:inherit}
+  @keyframes bfdpopin{from{opacity:0}to{opacity:1}}
+  @keyframes bfdpopup{from{transform:translateY(24px) scale(.92)}to{transform:none}}
 </style>
 <div id="bfd" style="display:none">
   <div class="slab">
@@ -311,6 +322,16 @@
     if (prizeKey === 'hidden') return '<a class="lbtn go" href="' + (secretUrl || '#') + '">시크릿 블프 입장하기</a><p class="hint" style="margin-top:12px">비밀 페이지예요 · 주소는 나만 알고 계세요</p>';
     return '<a class="lbtn go" href="' + COUPON_URL + '">쿠폰 쓰러 가기</a><p class="hint" style="margin-top:12px">쿠폰함에 바로 넣어 드렸어요</p>';
   }
+  function hiddenPop() { // 10/28 시크릿 코드 당첨 팝업 — 아래 입장 버튼을 놓치지 않게
+    if (prizeKey !== 'hidden' || document.getElementById('bfd-pop')) return;
+    var d = document.createElement('div'); d.id = 'bfd-pop';
+    d.innerHTML = '<div class="pc"><div class="pin"><div class="pk">SECRET CODE</div><div class="pt">시크릿 코드 당첨!</div>'
+      + '<div class="pd">초대받은 분만 들어가는<br><b>10박스 시크릿 특가</b>가 열렸어요</div>'
+      + '<a class="pgo" href="' + (secretUrl || '#') + '">시크릿 블프 입장하기 &rarr;</a>'
+      + '<button type="button" class="pno">나중에 볼게요</button></div></div>';
+    d.addEventListener('click', function (e) { if (e.target === d || e.target.className === 'pno') d.remove(); });
+    document.body.appendChild(d);
+  }
   function reveal(quiet) {
     if (done) return; done = true;
     if (cv.animate) cv.animate([{ opacity: 1 }, { opacity: 0 }], { duration: quiet ? 1 : 400, easing: 'steps(4)', fill: 'forwards' }); else cv.style.opacity = 0;
@@ -318,6 +339,7 @@
     lhint.innerHTML = prizeKey === 'hidden' ? '<em>시크릿 코드</em> 당첨! 시크릿 블프가 열렸어요' : '<b>' + LOOK[prizeKey].v + '</b> 당첨!';
     lafter.innerHTML = afterHtml();
     if (quiet) return;
+    if (prizeKey === 'hidden' && state !== 'demo') setTimeout(hiddenPop, 900);
     var r = area.getBoundingClientRect();
     for (var i = 0; i < 26; i++) {
       var p = document.createElement('span'); p.className = 'bfd-sp';
