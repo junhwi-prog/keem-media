@@ -366,7 +366,7 @@
         + '<div class="note">24시간 안에 주문해 주세요</div><button type="button" class="pno">닫기</button>';
       else if (step === 2) h += '<div class="pt">담는 중…</div>';
       else if (step === 3) h += '<div class="pt">담았어요!</div><div class="big" style="margin-top:14px">주문할 때<br><b>쿠폰</b>을 꼭 눌러 주세요</div>'
-        + '<div class="note">누르면 9포가 0원!</div><a class="pgo" href="#" data-pop="more">다른 제품 보러 가기</a><a class="pg2" href="/order/basket.html">장바구니 보기</a>';
+        + '<div class="note">누르면 9포가 0원!</div><a class="pgo" href="/product/list.html?cate_no=228">다른 제품 보러 가기</a><a class="pg2" href="/order/basket.html">장바구니 보기</a>';
       else h += '<div class="pt">잠깐 안 됐어요</div><div class="note">한 번 더 눌러 주세요</div><a class="pgo" href="#" data-pop="add">장바구니에 담기</a><button type="button" class="pno">닫기</button>';
       d.innerHTML = h + '</div></div>';
     }
@@ -377,7 +377,6 @@
       if (!a) return;
       e.preventDefault();
       if (a.getAttribute('data-pop') === 'add') return add();
-      d.remove(); var b = document.getElementById('bfd'); if (b) window.scrollTo({ top: b.getBoundingClientRect().bottom + window.pageYOffset - 10, behavior: 'smooth' });
     });
     document.body.appendChild(d);
     if (addNow) add(); else show(1);
