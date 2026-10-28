@@ -362,11 +362,22 @@
     if (st === 401) { state = 'guest'; token = null; foil('로그인하고 긁어요'); lhint.innerHTML = '회원이면 <b>하루 한 장</b>, 꽝 없음'; lafter.innerHTML = afterHtml(); return; }
     state = 'ready'; foil('다시 긁어 주세요'); lhint.innerHTML = '잠깐 연결이 안 됐어요. <b>다시 긁으면</b> 돼요'; // 서버가 실패하면 오늘 장은 안 쓴 것으로 되돌려져 있다
   }
-  function startLive() {
+  function startLive(tries) {
+    tries = tries || 0;
     setPrize(''); foil('불러오는 중');
-    if (!window.CAFE24API) { state = 'closed'; foil('잠시 후 다시'); return; }
-    var C = cafe = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-09-01' });
-    C.getEncryptedMemberId(C24_CLIENT_ID, function (err, res) {
+    // 10/28 모바일: 카페24 SDK 가 덜 준비된 채 부르면 CAPP_ASYNC_METHODS 오류로 멈춘다 → 준비될 때까지 0.3초씩 기다렸다가 부른다(최대 약 12초)
+    if (!window.CAFE24API || !window.CAPP_ASYNC_METHODS) {
+      if (tries < 40) return setTimeout(function () { startLive(tries + 1); }, 300);
+      state = 'closed'; foil('잠시 후 다시'); lhint.innerHTML = '화면을 <b>새로고침</b>해 주세요'; return;
+    }
+    var answered = false;
+    setTimeout(function () { if (!answered && tries < 40) { answered = true; startLive(40); } else if (!answered) { answered = true; fail(0, {}); } }, 8000); // 응답이 안 오면 한 번 더
+    try {
+      var C = cafe = CAFE24API.init({ client_id: C24_CLIENT_ID, version: '2026-09-01' });
+      C.getEncryptedMemberId(C24_CLIENT_ID, onMember);
+    } catch (e) { answered = true; if (tries < 40) return setTimeout(function () { startLive(tries + 1); }, 300); return fail(0, {}); }
+    function onMember(err, res) {
+      if (answered) return; answered = true;
       if (err || !res || !res.member_id) return fail(401, {}); // 비회원
       token = res.member_id;
       api('GET').then(function (o) {
@@ -374,12 +385,12 @@
         if (o.j.drawn) { secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; reveal(true); lhint.innerHTML = '오늘 복권은 이미 긁었어요 · <b>내일 0시</b>에 새 장'; return; }
         state = 'ready'; foil('여기를 긁어요');
       }).catch(function () { fail(0, {}); });
-    });
+    }
   }
   function freshToken() {
     return new Promise(function (res) {
       if (!cafe) return res();
-      cafe.getEncryptedMemberId(C24_CLIENT_ID, function (err, r) { if (!err && r && r.member_id) token = r.member_id; res(); });
+      try { cafe.getEncryptedMemberId(C24_CLIENT_ID, function (err, r) { if (!err && r && r.member_id) token = r.member_id; res(); }); } catch (e) { res(); }
       setTimeout(res, 3000);
     });
   }
