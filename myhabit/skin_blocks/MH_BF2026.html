@@ -77,13 +77,24 @@
   #bfd section{margin:0 !important}
   /* 10/28 히든 당첨 팝업(사용자: 아래 입장 버튼을 못 볼 수도) — body 에 붙임 */
   #bfd-pop{position:fixed;inset:0;z-index:100000;-webkit-user-select:none;user-select:none;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72);padding:20px;animation:bfdpopin .25s steps(3) both}
-  #bfd-pop .pc{position:relative;width:310px;max-width:100%;background:#FF0A3C;border:4px solid #000;padding:10px;box-shadow:inset 4px 4px 0 #FF6F8C,inset -4px -4px 0 #B0002A,0 8px 0 #000;font-family:Pretendard,'Malgun Gothic',sans-serif;animation:bfdpopup .35s steps(4) both}
+  #bfd-pop .pc{position:relative;width:310px;max-width:100%;background:#FF0A3C;border:4px solid #000;padding:10px;box-shadow:inset 4px 4px 0 #FF6F8C,inset -4px -4px 0 #B0002A,0 8px 0 #000;font-family:Galmuri11,Pretendard,sans-serif;animation:bfdpopup .35s steps(4) both}
+  #bfd-pop .pc *{font-family:Galmuri11,Pretendard,sans-serif}
   #bfd-pop .pin{background:#F2EEEC;border:4px solid #000;padding:22px 16px 18px;text-align:center;color:#111}
   #bfd-pop .pk{font-family:Galmuri11,Pretendard,sans-serif;font-weight:700;font-size:12px;letter-spacing:.2em;color:#FF0A3C}
+  #bfd-pop .pc .pt,#bfd-pop .pc .pgo,#bfd-pop .pc .big{font-family:Galmuri14,Pretendard,sans-serif}
   #bfd-pop .pt{margin-top:8px;font-family:Galmuri14,Pretendard,sans-serif;font-weight:700;font-size:24px;line-height:1.25;color:#111}
   #bfd-pop .pd{margin-top:10px;font-size:13.5px;line-height:1.55;color:#444;word-break:keep-all}
   #bfd-pop .pgo{display:block;margin:18px auto 0;width:100%;font-family:Galmuri14,Pretendard,sans-serif;font-weight:700;font-size:17px;border:4px solid #000;padding:11px 0;text-align:center;text-decoration:none;background:#FF0A3C;color:#fff;box-shadow:inset 4px 4px 0 #FF6F8C,inset -4px -4px 0 #B0002A,0 5px 0 #000}
   #bfd-pop .pno{display:inline-block;margin-top:14px;font-size:12px;color:#777;text-decoration:underline;cursor:pointer;background:none;border:0;font-family:inherit}
+  /* 10/28 효소맥스 9포 당첨 팝업(간결판, 글씨 크게) — 담기 버튼이 장바구니에 바로 넣는다 */
+  #bfd-pop.mx .pt{font-size:26px;margin-top:0}
+  #bfd-pop .pimg{width:120px;height:120px;margin:12px auto 0;background:#fff center/contain no-repeat;border:3px solid #000}
+  #bfd-pop .big{margin-top:12px;font-size:19px;line-height:1.45;font-weight:700;color:#111;word-break:keep-all}
+  #bfd-pop .big b{color:#FF0A3C}
+  #bfd-pop .note{margin-top:12px;font-size:15px;font-weight:700;color:#444;word-break:keep-all}
+  #bfd-pop.mx .pgo{font-size:19px;padding:14px 0;cursor:pointer}
+  #bfd-pop .pg2{display:block;margin:8px auto 0;width:100%;font-weight:700;font-size:15px;border:3px solid #000;padding:11px 0;text-align:center;background:#fff;color:#111;text-decoration:none;box-sizing:border-box}
+  #bfd-pop.mx .pno{font-size:14px;font-weight:700}
   @keyframes bfdpopin{from{opacity:0}to{opacity:1}}
   @keyframes bfdpopup{from{transform:translateY(24px) scale(.92)}to{transform:none}}
 </style>
@@ -320,6 +331,7 @@
     if (state === 'guest') return '<a class="lbtn k" href="' + JOIN_URL + '">카카오로 1초 가입하고 긁기</a><a class="lbtn s" href="#" data-act="login">이미 회원이에요 · 로그인</a><p class="hint" style="margin-top:12px">처음 가입하면 첫 복권은 <em>시크릿 코드 확정</em></p>';
     if (state === 'demo') return '<a class="lbtn s" href="#" data-act="again">다시 긁어 보기 (시안)</a>';
     if (prizeKey === 'hidden') return '<a class="lbtn go" href="' + (secretUrl || '#') + '">시크릿 블프 입장하기</a><p class="hint" style="margin-top:12px">비밀 페이지예요 · 주소는 나만 알고 계세요</p>';
+    if (prizeKey === 'max') return '<a class="lbtn go" href="#" data-act="max">장바구니에 담기</a><p class="hint" style="margin-top:12px">3만 원 이상 사면 무료 · 주문할 때 <em>쿠폰</em>을 꼭 눌러 주세요</p>';
     return '<a class="lbtn go" href="' + COUPON_URL + '">쿠폰 쓰러 가기</a><p class="hint" style="margin-top:12px">쿠폰함에 바로 넣어 드렸어요</p>';
   }
   function hiddenPop() { // 10/28 시크릿 코드 당첨 팝업 — 아래 입장 버튼을 놓치지 않게
@@ -332,6 +344,44 @@
     d.addEventListener('click', function (e) { if (e.target === d || e.target.className === 'pno') d.remove(); });
     document.body.appendChild(d);
   }
+  // 효소맥스 9포: 상품 513(숨김 카테고리)을 장바구니에 바로 담는다. 맛 2종 중 1개 랜덤, 1인 1개(상품 최대 1개라 두 번째는 -1003 = 이미 담김)
+  var MAX_PNO = '513', MAX_IMG = '/web/product/big/202601/5b2e0f396c10a4a73af2286fa4e30dda.png';
+  var MAX_ITEMS = [['P00000TT000A', '01. 효소맥스 곡물맛'], ['P00000TT000B', '02. 효소맥스 그린바나나맛']];
+  function addMax(cb) {
+    var it = MAX_ITEMS[Math.floor(Math.random() * MAX_ITEMS.length)], f = new URLSearchParams();
+    [['selected_item[]', '1||' + it[0]], ['relation_product', 'yes'], ['is_individual', 'F'], ['product_no', MAX_PNO], ['main_cate_no', '0'], ['display_group', '0'],
+     ['option_type', 'T'], ['product_min', '1'], ['command', 'add'], ['has_option', 'T'], ['delvType', 'A'], ['redirect', '2'], ['product_max_type', 'T'], ['product_max', '1'],
+     ['basket_type', 'A0000'], ['prd_detail_ship_type', 'P'], ['quantity', '1'], ['is_direct_buy', 'F'], ['optionids[]', 'option1'], ['needed[]', 'option1'], ['option1', it[1]], ['is_cultural_tax', 'F']]
+      .forEach(function (x) { f.append(x[0], x[1]); });
+    fetch('/exec/front/order/basket/', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest' }, body: f.toString() })
+      .then(function (r) { return r.json(); }).then(function (j) { cb(j && (j.result === 0 || j.result === -1003)); }).catch(function () { cb(false); });
+  }
+  function maxPop(addNow) {
+    if (document.getElementById('bfd-pop')) return;
+    var d = document.createElement('div'); d.id = 'bfd-pop'; d.className = 'mx';
+    function show(step) {
+      var h = '<div class="pc"><div class="pin">';
+      if (step === 1) h += '<div class="pt">효소맥스 9포 당첨!</div><div class="pimg" style="background-image:url(' + MAX_IMG + ')"></div>'
+        + '<div class="big">3만 원 이상 사면<br><b>무료로 드려요</b></div><a class="pgo" href="#" data-pop="add">장바구니에 담기</a>'
+        + '<div class="note">24시간 안에 주문해 주세요</div><button type="button" class="pno">닫기</button>';
+      else if (step === 2) h += '<div class="pt">담는 중…</div>';
+      else if (step === 3) h += '<div class="pt">담았어요!</div><div class="big" style="margin-top:14px">주문할 때<br><b>쿠폰</b>을 꼭 눌러 주세요</div>'
+        + '<div class="note">누르면 9포가 0원!</div><a class="pgo" href="#" data-pop="more">다른 제품 보러 가기</a><a class="pg2" href="/order/basket.html">장바구니 보기</a>';
+      else h += '<div class="pt">잠깐 안 됐어요</div><div class="note">한 번 더 눌러 주세요</div><a class="pgo" href="#" data-pop="add">장바구니에 담기</a><button type="button" class="pno">닫기</button>';
+      d.innerHTML = h + '</div></div>';
+    }
+    function add() { show(2); addMax(function (ok) { show(ok ? 3 : 4); }); }
+    d.addEventListener('click', function (e) {
+      var t = e.target, a = t.closest && t.closest('[data-pop]');
+      if (t === d || t.className === 'pno') return d.remove();
+      if (!a) return;
+      e.preventDefault();
+      if (a.getAttribute('data-pop') === 'add') return add();
+      d.remove(); var b = document.getElementById('bfd'); if (b) window.scrollTo({ top: b.getBoundingClientRect().bottom + window.pageYOffset - 10, behavior: 'smooth' });
+    });
+    document.body.appendChild(d);
+    if (addNow) add(); else show(1);
+  }
   function reveal(quiet) {
     if (done) return; done = true;
     if (cv.animate) cv.animate([{ opacity: 1 }, { opacity: 0 }], { duration: quiet ? 1 : 400, easing: 'steps(4)', fill: 'forwards' }); else cv.style.opacity = 0;
@@ -340,6 +390,7 @@
     lafter.innerHTML = afterHtml();
     if (quiet) return;
     if (prizeKey === 'hidden' && state !== 'demo') setTimeout(hiddenPop, 900);
+    if (prizeKey === 'max' && state !== 'demo') setTimeout(function () { maxPop(false); }, 900);
     var r = area.getBoundingClientRect();
     for (var i = 0; i < 26; i++) {
       var p = document.createElement('span'); p.className = 'bfd-sp';
@@ -434,6 +485,7 @@
   lafter.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('[data-act]'); if (!a) return;
     e.preventDefault();
+    if (a.getAttribute('data-act') === 'max') return maxPop(true);
     if (a.getAttribute('data-act') === 'login') goLogin(); else resetDemo();
   });
   var started = false;
