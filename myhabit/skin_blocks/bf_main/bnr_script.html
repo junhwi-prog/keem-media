@@ -1,0 +1,20 @@
+<!--블프 배너 날짜 예약(10/28)-->
+<script>
+(function () {
+  var OPEN = new Date('2026-11-01T00:00:00+09:00').getTime();
+  var END = new Date('2026-12-01T00:00:00+09:00').getTime();
+  var sim = window.MHBF_SIM ? new Date(window.MHBF_SIM + '+09:00').getTime() : 0;  // 미리보기용
+  var t = sim || Date.now();
+  var wrap = document.querySelector('.mainBnr-swiper .swiper-wrapper');
+  if (!wrap) return;
+  function drop(el) { if (el && el.parentNode) el.parentNode.removeChild(el); }
+  var bf = wrap.querySelector('.mhbf-slide');
+  if (t < OPEN || t >= END) drop(bf);
+  if (t >= OPEN) {  // 11/1 0시부터 '힘내 시월' 내림
+    [].slice.call(wrap.querySelectorAll('.swiper-slide')).forEach(function (s) {
+      var a = s.querySelector('a[href*="/project/"]');
+      if (a && a.getAttribute('href').indexOf('/224/') > -1) drop(s);
+    });
+  }
+})();
+</script>

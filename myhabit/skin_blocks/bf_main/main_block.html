@@ -1,0 +1,192 @@
+<!-- 2026-10-27 마이해빗 메인 '블프 깜짝특가' 칸 (사용자 제안: 메인 베스트 위에 8,900원 딜 + 시계로 구매 촉진, 아래 한 줄은 매일 복권)
+     10/27 2차: 첫 시안(검정·빨강 꽉 찬 띠)이 위아래 칸과 톤이 안 맞아 메인 톤으로 바꿈(사용자 "너 제안대로") — 옛 시안 _versions/block_다크빨강_1027.html
+       글씨 = 몰과 같은 Pretendard Variable, 제목·부제·상품명·가격 크기와 색은 메인 '베스트 상품' 칸 실측값, 사진은 몰 목록 썸네일(베이지 바탕),
+       시계 칸·버튼은 메인 '더 보기' 버튼 색(#1F110C, 모서리 3px). 빨강은 BLACK FRIDAY 글자(10/27 크게)·할인율·마지막 하루 시계에만.
+     자리: 메인 첫 배너 바로 아래, 베스트 상품 위. 신제품은 PC 3개·모바일 4개로 줄임(스킨 진열 개수 설정, 이 파일과 별개).
+     날짜에 따라 저절로 바뀐다: 11/1 전 = 물음표 + 오픈까지 시계 / 주차별 상품(11.1~8 NMN · 9~15 파라 · 16~22 애사비 · 23~30 효소습관 플러스) + 그 주 종료까지 시계 / 12/1부터 칸 숨김.
+     아래 한 줄 = 매일 복권(상세 #lotto 로, 11/1 전엔 예고, 뒤엔 '매일 받는 100% 당첨 복권 긁기'만). 100원딜은 10/27 메인에서 뺌(금방 나가서).
+     사진 img/thumb1~4.jpg = 몰 원래 상품(411·497·412·492) 목록 사진. 몰에 올릴 땐 IMG_BASE·DETAIL_URL 을 실제 주소로.
+     카페24 편집기가 역슬래시를 지우므로 코드에 역슬래시를 쓰지 않는다. 이름은 전부 #mhbf-main / mm- 로 시작(스킨과 안 겹치게). -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  #mhbf-main{--ink:#1F110C;--txt:#222;--sub:#666;--red:#E74C3C;--beige:#F7F4EF;color:var(--txt);font-family:'Pretendard Variable',Pretendard,'Malgun Gothic',sans-serif;-webkit-font-smoothing:antialiased;margin:50px 0 0;padding:0 15px;background:#fff}
+  #mhbf-main *{box-sizing:border-box;margin:0;padding:0}
+  #mhbf-main a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+  #mhbf-main .mm{max-width:1200px;margin:0 auto}
+  /* 제목 = 메인 '베스트 상품' 제목과 같은 크기·굵기 */
+  #mhbf-main .mm-title{text-align:center;padding-bottom:22px}
+  #mhbf-main .mm-tag{display:block;font-size:17px;font-weight:800;letter-spacing:.12em;color:var(--red);margin-bottom:6px;line-height:1.2}
+  #mhbf-main .mm-title h3{font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.45px;line-height:1.3}
+  #mhbf-main .mm-title p{font-size:12px;font-weight:300;color:var(--sub);margin-top:6px;line-height:1.4}
+  #mhbf-main .mm-body{display:grid;grid-template-columns:44% 1fr;grid-template-areas:'ph info' 'clk clk' 'buy buy';gap:14px 14px;align-items:center}
+  #mhbf-main .mm-ph{grid-area:ph;position:relative;display:block;aspect-ratio:1/1;background:var(--beige);overflow:hidden}
+  #mhbf-main .mm-ph img{display:block;width:100%;height:100%;object-fit:cover}
+  #mhbf-main .mm-q{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--ink)}
+  #mhbf-main .mm-q b{font-size:64px;font-weight:700;line-height:1}
+  #mhbf-main .mm-q i{font-style:normal;font-size:12px;font-weight:500;color:var(--sub);margin-top:10px}
+  #mhbf-main .mm-ph.pre img{display:none}
+  #mhbf-main .mm-ph.pre .mm-q{display:flex}
+  #mhbf-main .mm-info{grid-area:info;min-width:0}
+  #mhbf-main .mm-wk{display:inline-block;font-size:11px;font-weight:500;color:var(--sub);border:1px solid #DDD;border-radius:3px;padding:3px 6px 2px}
+  #mhbf-main .mm-nm{font-size:16px;font-weight:700;color:var(--txt);line-height:1.35;margin-top:8px;word-break:keep-all}
+  #mhbf-main .mm-was{font-size:14px;font-weight:400;color:#222;text-decoration:line-through;margin-top:8px;min-height:1.2em}
+  #mhbf-main .mm-now{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px;margin-top:2px;white-space:nowrap}
+  #mhbf-main .mm-now em{font-style:normal;font-size:18px;font-weight:700;color:var(--red)}
+  #mhbf-main .mm-now b{font-size:20px;font-weight:700;color:var(--txt)}
+  /* 시계 = 메인 '더 보기' 버튼 색 칸 */
+  #mhbf-main .mm-clk{grid-area:clk;border-top:1px solid #EEE;padding-top:14px}
+  /* 시계 요소만 살짝(10/27 사용자: 검정 판은 탈락, 아까 것에 요소만) — 빨간 깜빡이는 점 + BLACK FRIDAY 글자 + 빨간 콜론 */
+  #mhbf-main .mm-cap{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:500;color:var(--sub)}
+  #mhbf-main .mm-cap:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red);animation:mmcol 1s ease-in-out infinite}
+  #mhbf-main .mm-cap b{color:var(--red);font-weight:800;letter-spacing:.08em;font-size:11px}
+  #mhbf-main .mm-dg{display:flex;justify-content:center;align-items:flex-start;gap:5px;margin-top:8px;font-variant-numeric:tabular-nums}
+  #mhbf-main .mm-u{text-align:center}
+  #mhbf-main .mm-u .p{display:flex;gap:3px}
+  #mhbf-main .mm-d{position:relative;width:26px;height:36px;border-radius:3px;background:var(--ink);color:#fff;overflow:hidden}
+  #mhbf-main .mm-d span{position:absolute;left:0;right:0;top:0;line-height:36px;text-align:center;font-size:20px;font-weight:600;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .6s}
+  #mhbf-main .mm-d span.in{transform:translateY(-80%);opacity:0}
+  #mhbf-main .mm-d span.out{transform:translateY(80%);opacity:0}
+  #mhbf-main .mm-u i{display:block;font-style:normal;font-size:10px;font-weight:400;color:#999;margin-top:4px;letter-spacing:.06em}
+  #mhbf-main .mm-col{font-size:18px;font-weight:700;color:var(--red);line-height:36px;animation:mmcol 1s ease-in-out infinite}
+  @keyframes mmcol{50%{opacity:.3}}
+  #mhbf-main .mm-clk.hot .mm-cap{color:var(--red);font-weight:600}
+  #mhbf-main .mm-clk.hot .mm-d{background:var(--red)}
+  /* 구매 버튼 = 메인 '더 보기' 버튼과 같은 색·모서리 */
+  #mhbf-main .mm-buy{grid-area:buy;display:flex;align-items:center;justify-content:center;height:48px;border-radius:3px;background:var(--ink);color:#fff;font-size:14px;font-weight:500}
+  #mhbf-main .mm-buy.off{background:#EEE;color:#999;pointer-events:none}
+  #mhbf-main .mm-100{display:flex;align-items:center;gap:10px;margin-top:12px;background:var(--beige);border-radius:3px;padding:12px}
+  #mhbf-main .mm-100 .b{flex:none;color:var(--red);border:1px solid var(--red);font-size:11px;font-weight:600;border-radius:3px;padding:3px 6px 2px;background:#fff}
+  #mhbf-main .mm-100 .t{flex:1;min-width:0;font-size:12px;font-weight:400;line-height:1.5;color:var(--txt);word-break:keep-all}
+  #mhbf-main .mm-100 .t b{font-weight:600;color:var(--ink)}
+  #mhbf-main .mm-100 .t em{font-style:normal;color:var(--red);font-variant-numeric:tabular-nums;font-weight:600}
+  #mhbf-main .mm-100 .ar{flex:none;color:#999;font-size:16px}
+  #mhbf-main .mm-more{display:block;text-align:center;margin-top:14px;font-size:12px;font-weight:400;color:var(--sub);text-decoration:underline;text-underline-offset:3px}
+
+  /* PC: 메인과 같은 여백(위 120px·좌우 120px), 사진 왼쪽 + 오른쪽에 이름·가격·시계·버튼 */
+  @media (min-width:1024px){
+    #mhbf-main{margin-top:120px;padding:0 120px}
+    #mhbf-main .mm-title{padding-bottom:45px}
+    #mhbf-main .mm-tag{font-size:24px;margin-bottom:10px}
+    #mhbf-main .mm-title h3{font-size:28px;letter-spacing:-.7px}
+    #mhbf-main .mm-title p{font-size:16px;margin-top:8px}
+    #mhbf-main .mm-body{grid-template-columns:440px 1fr;grid-template-areas:'ph info' 'ph clk' 'ph buy';gap:24px 60px;max-width:1040px;margin:0 auto;align-content:center}
+    #mhbf-main .mm-info{align-self:end}
+    #mhbf-main .mm-wk{font-size:13px;padding:4px 8px 3px}
+    #mhbf-main .mm-nm{font-size:24px;margin-top:12px}
+    #mhbf-main .mm-was{font-size:16px;margin-top:14px}
+    #mhbf-main .mm-now em{font-size:26px}
+    #mhbf-main .mm-now b{font-size:30px}
+    #mhbf-main .mm-clk{padding-top:24px}
+    #mhbf-main .mm-cap{justify-content:flex-start;font-size:14px}
+    #mhbf-main .mm-cap b{font-size:12px}
+    #mhbf-main .mm-dg{justify-content:flex-start;margin-top:10px}
+    #mhbf-main .mm-d{width:36px;height:50px}
+    #mhbf-main .mm-d span{line-height:50px;font-size:28px}
+    #mhbf-main .mm-col{line-height:50px;font-size:24px}
+    #mhbf-main .mm-u i{font-size:11px}
+    #mhbf-main .mm-buy{align-self:start;height:52px;max-width:420px;font-size:14px}
+    #mhbf-main .mm-100{max-width:1040px;margin:28px auto 0;padding:16px 20px}
+    #mhbf-main .mm-100 .t{font-size:14px}
+    #mhbf-main .mm-100 .b{font-size:12px}
+    #mhbf-main .mm-more{font-size:14px;margin-top:18px}
+  }
+</style>
+<section id="mhbf-main" style="display:none">
+  <div class="mm">
+    <div class="mm-title"><span class="mm-tag">BLACK FRIDAY</span><h3 id="mm-h">이번 주 깜짝특가 8,900원</h3><p id="mm-p">매주 하나씩 바뀌는 블랙프라이데이 특가</p></div>
+    <div class="mm-body">
+      <a class="mm-ph" id="mm-ph"><img id="mm-img" alt=""><span class="mm-q"><b>?</b><i>11월 1일 공개</i></span></a>
+      <div class="mm-info">
+        <span class="mm-wk" id="mm-wk"></span>
+        <p class="mm-nm" id="mm-nm"></p>
+        <p class="mm-was" id="mm-was"></p>
+        <p class="mm-now"><b>8,900원</b><em id="mm-off"></em></p>
+      </div>
+      <div class="mm-clk" id="mm-clk"><p class="mm-cap" id="mm-cap"></p><div class="mm-dg" id="mm-dg"></div></div>
+      <a class="mm-buy" id="mm-buy"></a>
+    </div>
+    <a class="mm-100" id="mm-100"><span class="b">복권</span><span class="t" id="mm-100t"></span><span class="ar">›</span></a>
+    <a class="mm-more" id="mm-more">블랙프라이데이 전체 혜택 보기</a>
+  </div>
+</section>
+<script>
+(function () {
+  var IMG_BASE = window.MHBF_IMG || 'https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cbd0222/myhabit/bf2026/main/';                                  // 몰에 올릴 때 이미지 주소로
+  var DETAIL_URL = window.MHBF_DETAIL || '/product/project.html?cate_no=229';   // 블프 기획전(상세) 페이지 주소 (10/27 확정)
+  var OPEN = new Date('2026-11-01T00:00:00+09:00').getTime();
+  var END = new Date('2026-11-30T23:59:59+09:00').getTime();
+  var LOCAL = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+  var SIM = window.MHBF_SIM || (LOCAL ? new URLSearchParams(location.search).get('d') : '') || '';
+  var OFFSET = SIM ? new Date(SIM + (SIM.length > 10 ? '' : 'T12:00:00') + '+09:00').getTime() - Date.now() : 0;
+  var PFX = LOCAL ? 'https://myhabit.shop' : '';
+  function nowMs() { return Date.now() + OFFSET; }
+  function two(n) { return (n < 10 ? '0' : '') + n; }
+  function won(n) { return String(n).replace(/(.)(?=(...)+$)/g, '$1,'); }
+  // 깜짝특가 8,900원 — 할인율은 소비자가 기준 내림(10/20 사용자 결정)
+  var DEALS = [
+    { no: '501', name: '마이해빗 에버셀 NMN 파이토', was: 70500, s: '11.01', e: '11.08', end: '2026-11-08' },
+    { no: '503', name: '마이해빗 파라다이스그레인 버닝', was: 29900, s: '11.09', e: '11.15', end: '2026-11-15' },
+    { no: '508', name: '마이해빗 애사비 피즈 플랫피치', was: 51500, s: '11.16', e: '11.22', end: '2026-11-22' },
+    { no: '505', name: '마이해빗 프리미엄 효소습관 플러스', was: 56000, s: '11.23', e: '11.30', end: '2026-11-30' }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  var sec = $('mhbf-main');
+
+  // 시계 칸: 일 시 분 초, 바뀐 자리만 위에서 미끄러져 내려온다(상세 시계와 같은 움직임)
+  var LB = ['DAY', 'HRS', 'MIN', 'SEC'], h = '';
+  LB.forEach(function (l, i) { h += (i ? '<span class="mm-col">:</span>' : '') + '<div class="mm-u"><div class="p"><div class="mm-d"><span>0</span></div><div class="mm-d"><span>0</span></div></div><i>' + l + '</i></div>'; });
+  $('mm-dg').innerHTML = h;
+  var cells = $('mm-dg').querySelectorAll('.mm-d'), shown = [];
+  function setDigit(i, ch) {
+    if (shown[i] === ch) return;
+    var cell = cells[i], old = cell.lastElementChild;
+    if (shown[i] === undefined) { old.textContent = ch; shown[i] = ch; return; }
+    shown[i] = ch;
+    var nu = document.createElement('span'); nu.className = 'in'; nu.textContent = ch; cell.appendChild(nu);
+    void nu.offsetWidth; nu.className = ''; old.className = 'out';
+    setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 650);
+  }
+  function setClock(target) {
+    var s = Math.max(0, Math.floor((target - nowMs()) / 1000));
+    var txt = two(Math.min(99, Math.floor(s / 86400))) + two(Math.floor(s % 86400 / 3600)) + two(Math.floor(s % 3600 / 60)) + two(s % 60);
+    for (var i = 0; i < 8; i++) setDigit(i, txt.charAt(i));
+    return s;
+  }
+  var lastKey = '';
+  function tick() {
+    var t = nowMs();
+    if (t > END || t < OPEN) { sec.style.display = 'none'; return; }  // 몰판(10/28): 11/1 0시 전엔 숨김
+    sec.style.display = '';
+    var pre = t < OPEN, wk = 0;
+    if (!pre) { for (var i = 0; i < 4; i++) { if (t <= new Date(DEALS[i].end + 'T23:59:59+09:00').getTime()) { wk = i; break; } } }
+    var d = DEALS[wk], key = (pre ? 'pre' : 'w') + wk;
+    if (key !== lastKey) { // 주가 바뀔 때만 다시 그림
+      lastKey = key;
+      $('mm-wk').textContent = pre ? '11.01 – 11.30' : 'WEEK ' + (wk + 1) + ' · ' + d.s + ' – ' + d.e;
+      $('mm-h').textContent = pre ? '블랙프라이데이 깜짝특가 8,900원' : '이번 주 깜짝특가 8,900원';
+      $('mm-p').textContent = pre ? '11월 한 달, 매주 하나씩 바뀌는 특가' : '매주 하나씩 바뀌는 블랙프라이데이 특가';
+      $('mm-ph').className = 'mm-ph' + (pre ? ' pre' : '');
+      if (!pre) $('mm-img').src = IMG_BASE + 'thumb' + (wk + 1) + '.jpg';
+      $('mm-img').alt = pre ? '11월 1일 공개' : d.name;
+      $('mm-nm').textContent = pre ? '11월 1일 공개!' : d.name;
+      $('mm-was').textContent = pre ? '' : won(d.was) + '원';
+      $('mm-off').textContent = pre ? '최대 87%' : Math.floor((1 - 8900 / d.was) * 100) + '%';
+      var url = PFX + '/product/detail.html?product_no=' + d.no;
+      var buy = $('mm-buy'), ph = $('mm-ph');
+      if (pre) { buy.className = 'mm-buy off'; buy.innerHTML = '<span>11/1(일) 0시 오픈</span>'; buy.removeAttribute('href'); ph.href = DETAIL_URL; }
+      else { buy.className = 'mm-buy'; buy.innerHTML = '<span>8,900원에 구매하기</span>'; buy.href = url; ph.href = url; }
+      $('mm-cap').innerHTML = '<b>BLACK FRIDAY</b>' + (pre ? '깜짝특가 오픈까지' : '이번 주 특가 종료까지');
+      $('mm-more').href = DETAIL_URL;
+    }
+    var target = pre ? OPEN : new Date(d.end + 'T23:59:59+09:00').getTime();
+    var s = setClock(target);
+    $('mm-clk').className = 'mm-clk' + (!pre && s < 86400 ? ' hot' : '');  // 그 주 마지막 하루는 빨간 숫자
+    // 아래 한 줄 = 매일 복권(10/27 사용자: 100원딜은 금방 나가 메인에서 소구 안 함). 상세 EVENT 1 복권(#lotto)으로
+    var a = $('mm-100'); a.href = DETAIL_URL + '#lotto';
+    if (pre) $('mm-100t').innerHTML = '<b>11월 1일부터 매일 받는 100% 당첨 복권</b>';
+    else $('mm-100t').innerHTML = '<b>매일 받는 100% 당첨 복권 긁기</b>';  // 남은 시간은 안 붙인다(긁었는지가 사람마다 달라서, 10/27)
+  }
+  function loop() { tick(); setTimeout(loop, 1000 - (nowMs() % 1000) + 15); }
+  loop();
+})();
+</script>
