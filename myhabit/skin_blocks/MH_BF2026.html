@@ -331,7 +331,7 @@
     if (state === 'guest') return '<a class="lbtn k" href="' + JOIN_URL + '">카카오로 1초 가입하고 긁기</a><a class="lbtn s" href="#" data-act="login">이미 회원이에요 · 로그인</a><p class="hint" style="margin-top:12px">처음 가입하면 첫 복권은 <em>시크릿 코드 확정</em></p>';
     if (state === 'demo') return '<a class="lbtn s" href="#" data-act="again">다시 긁어 보기 (시안)</a>';
     if (prizeKey === 'hidden') return '<a class="lbtn go" href="' + (secretUrl || '#') + '">시크릿 블프 입장하기</a><p class="hint" style="margin-top:12px">비밀 페이지예요 · 주소는 나만 알고 계세요</p>';
-    if (prizeKey === 'max') return '<a class="lbtn go" href="#" data-act="max">장바구니에 담기</a><p class="hint" style="margin-top:12px">3만 원 이상 사면 무료 · 주문할 때 <em>쿠폰</em>을 꼭 눌러 주세요</p>';
+    if (prizeKey === 'max') return '<a class="lbtn go" href="#" data-act="max">장바구니에 담기</a><p class="hint" style="margin-top:12px">3만 원 이상 사면 무료 · 맛은 랜덤 증정<br>주문할 때 <em>쿠폰</em>을 꼭 눌러 주세요</p>';
     return '<a class="lbtn go" href="' + COUPON_URL + '">쿠폰 쓰러 가기</a><p class="hint" style="margin-top:12px">쿠폰함에 바로 넣어 드렸어요</p>';
   }
   function hiddenPop() { // 10/28 시크릿 코드 당첨 팝업 — 아래 입장 버튼을 놓치지 않게
@@ -362,7 +362,7 @@
     function show(step) {
       var h = '<div class="pc"><div class="pin">';
       if (step === 1) h += '<div class="pt">효소맥스 9포 당첨!</div><div class="pimg" style="background-image:url(' + MAX_IMG + ')"></div>'
-        + '<div class="big">3만 원 이상 사면<br><b>무료로 드려요</b></div><a class="pgo" href="#" data-pop="add">장바구니에 담기</a>'
+        + '<div class="big">3만 원 이상 사면<br><b>무료로 드려요</b></div><div class="note" style="margin-top:8px">맛은 2종 중 <b style="color:#FF0A3C">랜덤 증정</b></div><a class="pgo" href="#" data-pop="add">장바구니에 담기</a>'
         + '<div class="note">24시간 안에 주문해 주세요</div><button type="button" class="pno">닫기</button>';
       else if (step === 2) h += '<div class="pt">담는 중…</div>';
       else if (step === 3) h += '<div class="pt">담았어요!</div><div class="big" style="margin-top:14px">주문할 때<br><b>쿠폰</b>을 꼭 눌러 주세요</div>'
