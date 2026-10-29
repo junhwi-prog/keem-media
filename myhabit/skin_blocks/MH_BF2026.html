@@ -19,7 +19,7 @@
   @keyframes bfdcol{0%,100%{opacity:1}50%{opacity:.35}}
   #bfd .clk .l{position:absolute;width:16cqw;margin-left:-8cqw;top:15.05cqw;text-align:center;font-size:2.95cqw;font-weight:500;line-height:1;color:var(--gray)}
   #bfd .clk .cap{position:absolute;left:0;right:0;top:1cqw;text-align:center;font-size:2.3cqw;font-weight:700;color:var(--red);letter-spacing:.02em}
-  #bfd .clk.hot .d span{color:var(--red)}
+  #bfd .clk.urg .d span{color:var(--red)}
 
   /* 2) 복권 — 기획전_시안 도트 복권(스크래치_시안.html 톤) 그대로, 색만 상세에 맞춤. 이름이 겹치지 않게 전부 #lotto 안에서만 */
   #lotto{--edge:#000;--pan:#FF0A3C;--pan2:#B0002A;--panh:#FF6F8C;--pink:#FFC2CF;--win:#F2EEEC;--win2:#CFC8C5;
@@ -49,6 +49,8 @@
   #lotto .lbtn{display:block;margin:12px auto 0;width:78%;font-family:Galmuri14;font-weight:700;font-size:17px;border:4px solid #000;padding:9px 0;cursor:pointer;text-align:center;text-decoration:none}
   #lotto .lbtn.k{background:#FEE500;color:#191919;box-shadow:inset 4px 4px 0 #FFF59A,inset -4px -4px 0 #C9B600,0 5px 0 #000}
   #lotto .lbtn.s{background:#2A2A2A;color:#fff;font-size:14px;box-shadow:inset 3px 3px 0 #444,inset -3px -3px 0 #1A1A1A,0 4px 0 #000}
+  #lotto .lsec{width:330px;max-width:calc(100% - 36px);margin:22px auto 0;border-top:2px dashed #666;padding-top:14px;text-align:center}
+  #lotto .lsk{font-family:Galmuri11,sans-serif;font-size:12px;font-weight:700;color:#FFD43B;letter-spacing:.12em;margin:0}
   #lotto .lbtn.go{background:var(--pan);color:#fff;box-shadow:inset 4px 4px 0 var(--panh),inset -4px -4px 0 var(--pan2),0 5px 0 #000}
   #lotto .lnote{margin:24px 20px 0;background:#1A1A1A;border:4px solid #000;padding:14px 14px 12px;box-shadow:inset 3px 3px 0 #2A2A2A}
   #lotto .lnote h4{margin:0 0 6px;font-family:Galmuri11;font-weight:700;font-size:14px;color:#fff}
@@ -116,6 +118,7 @@
     </div>
     <p class="hint" id="lhint">손가락으로 <b>은색 부분</b>을 긁어 보세요</p>
     <div id="lafter"></div>
+    <div id="lsec"></div>
     <div class="lnote">
       <h4>이벤트 유의사항</h4>
       <ul>
@@ -135,7 +138,7 @@
   <div class="cut" style="aspect-ratio:1000/2210"><img class="wimg" style="top:-146.2cqw" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/cum_w1.jpg" alt="EVENT 3 깜짝 특가 8,900원"><a class="hot" id="hot89" aria-label="이번 주 깜짝특가 상품"></a><i id="ev3" style="position:absolute;top:38cqw"></i></div>
   <div class="bwrap b2"><a class="bbtn" id="btn89"></a></div>
   <div class="cut" style="aspect-ratio:1000/395"><img class="wimg" style="top:-367.2cqw" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/cum_w1.jpg" alt="시크릿 블프 제품 전체보기"><a class="lnk" href="/product/list.html?cate_no=183" aria-label="시크릿 블프 제품 전체보기" style="left:3.6%;width:92.8%;top:3%;height:30%"></a></div>
-  <div class="mem"><img class="full" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/member.jpg" alt="마이해빗 회원 추가 혜택 · 3초 회원가입하기"><a class="lnk" href="/product/list.html?cate_no=220" aria-label="균일가 6,900원 창고 대방출" style="left:4.8%;width:90.4%;top:61.4%;height:18.8%"></a><a class="lnk" href="/member/login.html" aria-label="3초 회원가입하기" style="left:4%;width:92%;top:84.8%;height:7.6%"></a></div>
+  <div class="mem"><img class="full" src="https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@cf47e26/myhabit/bf2026/member.jpg" alt="마이해빗 회원 추가 혜택 · 3초 회원가입하기"><a class="lnk" href="/product/list.html?cate_no=220" aria-label="균일가 6,900원 창고 대방출" style="left:4.8%;width:90.4%;top:61.4%;height:18.8%"></a><a class="lnk" href="/member/agreement.html" aria-label="3초 회원가입하기" style="left:4%;width:92%;top:84.8%;height:7.6%"></a></div>
 </div>
 <script>
 (function () {
@@ -190,7 +193,7 @@
     var txt = two(Math.min(99, Math.floor(s / 86400))) + two(Math.floor(s % 86400 / 3600)) + two(Math.floor(s % 3600 / 60)) + two(s % 60);
     for (var i = 0; i < 8; i++) setDigit(i, txt.charAt(i));
     var hot = !pre && s > 0 && s < 3 * 86400;
-    clk.className = 'clk' + (hot ? ' hot' : '');
+    clk.className = 'clk' + (hot ? ' urg' : '');  // 10/29: 'hot' 은 구매 칸 숨김 규칙과 겹쳐 시계가 사라졌다
     cap.textContent = pre ? '11월 1일(일) 0시 오픈까지' : s === 0 ? '블랙프라이데이가 끝났어요' : hot ? '마감 임박' : '';
   }
   // 초가 바뀌는 순간에 맞춰 돈다(setInterval 은 밀려서 가끔 한 초를 건너뛰어 보인다)
@@ -217,6 +220,7 @@
   var DEAL89 = ['501', '503', '508', '505'];   // 깜짝특가 8,900원 NMN · 파라 · 애사비 · 효소습관 플러스(10/26 생성)
   var WED = ['11/4', '11/11', '11/18', '11/25'];
   var open100 = new Date('2026-11-' + two(4 + (wk - 1) * 7) + 'T10:00:00+09:00').getTime();
+  var close100 = open100 + 14 * 3600e3;  // 10/29: 다음 날 0시에 상품이 내려가므로 그때부터 회색 버튼 + 다음 100원딜 날짜 안내
   var gone100 = false;
   var PFX = LOCAL ? 'https://myhabit.shop' : '';
   function pUrl(no) { return PFX + '/product/detail.html?product_no=' + no; }
@@ -233,24 +237,39 @@
   h100.style.cssText = 'left:' + CX[wk - 1] / 10 + 'cqw;width:22.5cqw;top:70cqw;height:30cqw';
   h89.style.cssText = 'left:' + (wk % 2 ? 3.5 : 51.2) + 'cqw;width:45cqw;top:' + ((wk < 3 ? 2482 : 3036) - 1462) / 10 + 'cqw;height:51.2cqw';
   function paintBtns() {
-    var t = nowMs(), end = t > END;
-    setBtn('btn100', 'hot100', !end && !gone100 && t >= open100,
-      end ? '이벤트가 끝났어요' : gone100 ? '이번 주 100원딜 선착순 마감' : t < open100 ? WED[wk - 1] + '(수) 오전 10시 오픈' : '100원딜 구매하러 가기', DEAL_NO[wk - 1]);
+    var t = nowMs(), end = t > END, after = t >= close100;
+    if (after && !shownSold) { shownSold = true; setWeekImg('cum_w' + wk + '_sold.jpg'); }
+    setBtn('btn100', 'hot100', !end && !after && !gone100 && t >= open100,
+      end ? '이벤트가 끝났어요' : after ? (wk < 4 ? WED[wk] + '(수) 오전 10시 오픈' : '100원딜이 모두 끝났어요') : gone100 ? '이번 주 100원딜 선착순 마감' : t < open100 ? WED[wk - 1] + '(수) 오전 10시 오픈' : '100원딜 구매하러 가기', DEAL_NO[wk - 1]);
     setBtn('btn89', 'hot89', !end && t >= OPEN,
       end ? '이벤트가 끝났어요' : t < OPEN ? '11/1(일) 0시 오픈' : '깜짝특가 구매하러 가기', DEAL89[wk - 1]);
   }
+  var shownSold = false;
   paintBtns();
-  setInterval(paintBtns, 30000);  // 페이지를 열어 둔 채 10시를 넘겨도 버튼이 열리게
-  if (/[?&]soldout=1/.test(location.search)) soldOut();
-  else if (STOCK_API && DEAL_NO[wk - 1] && window.fetch) {
-    fetch(STOCK_API, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
-      if (j && j.stock && j.stock[DEAL_NO[wk - 1]] === 0) soldOut();
-    }).catch(function () {});
-  } else if (!LOCAL && DEAL_NO[wk - 1] && window.fetch && nowMs() >= open100) {
-    fetch(pUrl(DEAL_NO[wk - 1]), { cache: 'no-store', credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (h) {
-      if (/is_soldout_icon *= *'T'/.test(h)) soldOut();
-    }).catch(function () {});
+  // 품절 확인: 100원딜이 열려 있는 동안(그날 10시~자정) 30초마다 — 페이지를 켜 둔 손님 화면도 품절로 바뀌게(10/29)
+  function checkSold() {
+    var t = nowMs();
+    if (gone100 || t < open100 || t >= close100 || !DEAL_NO[wk - 1] || !window.fetch) return;
+    if (STOCK_API) {
+      fetch(STOCK_API, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.stock && j.stock[DEAL_NO[wk - 1]] === 0) soldOut();
+      }).catch(function () {});
+    } else if (!LOCAL) {
+      fetch(pUrl(DEAL_NO[wk - 1]), { cache: 'no-store', credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (h) {
+        if (/is_soldout_icon *= *'T'/.test(h)) soldOut();
+      }).catch(function () {});
+    }
   }
+  setInterval(function () { paintBtns(); checkSold(); }, 30000);  // 페이지를 열어 둔 채 10시·자정을 넘겨도 버튼이 바뀌게
+  if (/[?&]soldout=1/.test(location.search)) soldOut(); else checkSold();
+  [open100, close100].forEach(function (at) { var ms = at - nowMs(); if (ms > 0 && ms < 864e5) setTimeout(function () { paintBtns(); checkSold(); }, ms + 50); });
+  // 10/29: 주차·오픈·종료가 바뀌는 0시를 넘겨 페이지를 켜 둔 손님은 0~60초 사이에 새로고침(지난주 상품으로 가는 걸 막고, 한꺼번에 몰리지 않게)
+  ['2026-11-01', '2026-11-09', '2026-11-16', '2026-11-23', '2026-12-01'].some(function (d) {
+    var ms = new Date(d + 'T00:00:00+09:00').getTime() - nowMs();
+    if (ms <= 0) return false;
+    if (ms < 864e5) setTimeout(function () { location.reload(); }, ms + 1000 + Math.floor(Math.random() * 60000));
+    return true;
+  });
   document.getElementById('lno').textContent = 'No.' + two(k.m) + two(k.d);
 
   // ---------- 2) 복권 ----------
@@ -334,6 +353,13 @@
     if (prizeKey === 'max') return '<a class="lbtn go" href="#" data-act="max">장바구니에 담기</a><p class="hint" style="margin-top:12px">3만 원 이상 사면 무료 · 맛은 랜덤 증정<br>주문할 때 <em>쿠폰</em>을 꼭 눌러 주세요</p>';
     return '<a class="lbtn go" href="' + COUPON_URL + '">쿠폰 쓰러 가기</a><p class="hint" style="margin-top:12px">쿠폰함에 바로 넣어 드렸어요</p>';
   }
+  // 10/29: 히든을 한 번 받은 회원은 다음 날부터도 복권 아래에 입장 버튼(서버가 hasSecret 을 준다). 오늘 히든이면 위 버튼과 겹치니 안 띄움
+  function showSecret(j) {
+    var box = document.getElementById('lsec');
+    if (!box || !j || !j.hasSecret || !j.secretUrl || prizeKey === 'hidden') { if (box) box.innerHTML = ''; return; }
+    box.className = 'lsec';
+    box.innerHTML = '<p class="lsk">HIDDEN 당첨 고객 전용</p><a class="lbtn go" href="' + j.secretUrl + '">내 시크릿 페이지 가기</a><p class="hint" style="margin-top:12px">11/30까지 언제든 다시 들어올 수 있어요</p>';
+  }
   function hiddenPop() { // 10/28 시크릿 코드 당첨 팝업 — 아래 입장 버튼을 놓치지 않게
     if (prizeKey !== 'hidden' || document.getElementById('bfd-pop')) return;
     var d = document.createElement('div'); d.id = 'bfd-pop';
@@ -407,8 +433,9 @@
   }
   function fail(st, j) {
     setPrize('');
+    if (st === 403 && j.error === 'closed' && j.end && new Date(nowMs() + 9 * 3600000).toISOString().slice(0, 10) > j.end) { state = 'closed'; foil('이벤트가 끝났어요'); lhint.innerHTML = '참여해 주셔서 <b>감사해요</b>'; return; }
     if (st === 403 && j.error === 'closed') { state = 'closed'; foil('11월 1일 0시 오픈'); lhint.innerHTML = '행사가 열리면 <b>매일 한 장</b>씩 긁을 수 있어요'; return; }
-    if (st === 503 && j.error === 'paused') { state = 'closed'; foil('잠시 점검 중'); lhint.innerHTML = '잠시 후 <b>다시 열어</b> 주세요 · 오늘 복권은 그대로 남아 있어요'; return; }
+    if (st === 503 && j.error === 'paused') { showSecret(j); state = 'closed'; foil('잠시 점검 중'); lhint.innerHTML = '잠시 후 <b>다시 열어</b> 주세요 · 오늘 복권은 그대로 남아 있어요'; return; }
     if (st === 401) { state = 'guest'; token = null; foil('로그인하고 긁어요'); lhint.innerHTML = '회원이면 <b>하루 한 장</b>, 꽝 없음'; lafter.innerHTML = afterHtml(); return; }
     state = 'ready'; foil('다시 긁어 주세요'); lhint.innerHTML = '잠깐 연결이 안 됐어요. <b>다시 긁으면</b> 돼요'; // 서버가 실패하면 오늘 장은 안 쓴 것으로 되돌려져 있다
   }
@@ -432,8 +459,8 @@
       token = res.member_id;
       api('GET').then(function (o) {
         if (o.status !== 200) return fail(o.status, o.j);
-        if (o.j.drawn) { secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; reveal(true); lhint.innerHTML = '오늘 복권은 이미 긁었어요 · <b>내일 0시</b>에 새 장'; return; }
-        state = 'ready'; foil('여기를 긁어요');
+        if (o.j.drawn) { secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; reveal(true); lhint.innerHTML = '오늘 복권은 이미 긁었어요 · <b>내일 0시</b>에 새 장'; showSecret(o.j); return; }
+        state = 'ready'; foil('여기를 긁어요'); showSecret(o.j);
       }).catch(function () { fail(0, {}); });
     }
   }
@@ -449,7 +476,7 @@
     lprize.innerHTML = '<div class="v">두근두근…</div>';
     freshToken().then(function () { return api('POST'); }).then(function (o) {
       if (o.status !== 200) return fail(o.status, o.j);
-      secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; lbl.classList.add('bf-x');
+      secretUrl = o.j.secretUrl || ''; setPrize(o.j.prize); state = 'result'; lbl.classList.add('bf-x'); showSecret(o.j);
       if (waitReveal) reveal();
     }).catch(function () { fail(0, {}); });
   }
