@@ -1,17 +1,29 @@
 {
- "updated": "2026-11-23T23:00:04.240Z",
+ "updated": "2026-11-24T03:00:06.848Z",
  "posts": [
+  {
+   "code": "DgG1WogjBbs",
+   "file": "2026-11-24_DgG1WogjBbs.jpg",
+   "alt": "ploonie SKINCARE, ploonie ROUTINE",
+   "like": 1,
+   "cmt": 0,
+   "video": true,
+   "multi": false,
+   "pos": "50% 45%",
+   "date": "2026-11-24",
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-11-24_DgG1WogjBbs.jpg"
+  },
   {
    "code": "DgEGMI4D7xJ",
    "file": "2026-11-23_DgEGMI4D7xJ.jpg",
    "alt": "NEW DROP ploonie beauty",
-   "like": 9,
+   "like": 10,
    "cmt": 0,
    "video": false,
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-11-23",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-11-23_DgEGMI4D7xJ.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-11-23_DgEGMI4D7xJ.jpg"
   },
   {
    "code": "Df6s3vcydfE",
@@ -23,7 +35,7 @@
    "multi": false,
    "pos": "50% 20%",
    "date": "2026-11-19",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-11-19_Df6s3vcydfE.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-11-19_Df6s3vcydfE.jpg"
   },
   {
    "code": "Dfn_Ng4HyGa",
@@ -35,7 +47,7 @@
    "multi": false,
    "pos": "50% 20%",
    "date": "2026-11-12",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-11-12_Dfn_Ng4HyGa.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-11-12_Dfn_Ng4HyGa.jpg"
   },
   {
    "code": "DfYiZG9H_b-",
@@ -47,7 +59,7 @@
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-11-06",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-11-06_DfYiZG9H_b-.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-11-06_DfYiZG9H_b-.jpg"
   },
   {
    "code": "DfGkQPzH9g_",
@@ -59,19 +71,7 @@
    "multi": true,
    "pos": "50% 0%",
    "date": "2026-10-30",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-10-30_DfGkQPzH9g_.jpg"
-  },
-  {
-   "code": "De0fShrHzuU",
-   "file": "2026-10-23_De0fShrHzuU.jpg",
-   "alt": "친구야, 나랑 플루니 마실래?",
-   "like": 137,
-   "cmt": 127,
-   "video": false,
-   "multi": false,
-   "pos": "50% 20%",
-   "date": "2026-10-23",
-   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@e67469e13241f2d412d5b84d44efbdbc2bf70921/ploonie/ig/2026-10-23_De0fShrHzuU.jpg"
+   "src": "https://cdn.jsdelivr.net/gh/junhwi-prog/keem-media@dd3ede480fafcd5aaae0906406ceb5ffa7175879/ploonie/ig/2026-10-30_DfGkQPzH9g_.jpg"
   }
  ]
 }
